@@ -1,0 +1,7 @@
+.engineer-page {
+  display: flex;
+  flex-direction: column;
+
+  /* ✅ MAX GAP BETWEEN CARDS */
+  gap: 25px;
+}

@@ -1,0 +1,112 @@
+.edit-lender-card {
+  max-width: 100%;
+  margin-top: 35px;
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+/* =====================
+   TWO COLUMN FORM
+   ===================== */
+
+.edit-form.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+
+/* =====================
+   COMMON FORM STYLES
+   ===================== */
+
+.edit-lender-title {
+  margin-bottom: 25px;
+}
+
+.edit-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  /* color: #374151; */
+}
+
+.edit-form input,
+.edit-form select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  width: 100%;
+}
+
+/* =====================
+   FULL WIDTH ROWS
+   ===================== */
+
+.edit-form.two-column .form-actions {
+  grid-column: 1 / -1;
+}
+
+/* =====================
+   FORM ACTIONS (CENTER)
+   ===================== */
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.form-actions .primary {
+  background: #4f46e5;
+  color: white;
+}
+
+/* =====================
+   INLINE CHECKBOX FIELD
+   ===================== */
+
+.ld-inline-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  font-size: 14px;
+  /* color: #374151; */
+}
+
+.ld-inline-label {
+  white-space: nowrap;
+}
+
+.ld-inline-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

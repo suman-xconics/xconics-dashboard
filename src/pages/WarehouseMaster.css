@@ -1,0 +1,7 @@
+.warehouse-page {
+  display: flex;
+  flex-direction: column;
+
+  /* ✅ SAME GAP AS ENGINEER MASTER */
+  gap: 25px;
+}

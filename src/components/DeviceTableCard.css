@@ -1,0 +1,79 @@
+.device-table-wrapper {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.device-table-card {
+    background: #ffffff;
+    overflow: hidden;
+}
+
+body[data-theme="dark"] .device-table-card {
+    background: #020617;
+}
+
+.device-table-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.device-table-card thead {
+    background: #f8fafc;
+}
+
+body[data-theme="dark"] .device-table-card thead {
+    background: #020617;
+}
+
+.device-table-card th,
+.device-table-card td {
+    padding: 14px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    color: #0f172a;
+}
+
+body[data-theme="dark"] .device-table-card th,
+body[data-theme="dark"] .device-table-card td {
+    color: #f9fafb;
+    border-bottom-color: #1e293b;
+}
+
+.device-table-card th {
+    cursor: pointer;
+    user-select: none;
+}
+
+.device-table-card th svg {
+    margin-left: 4px;
+}
+
+/* STATUS CHIP */
+.status-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-chip.available {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-chip.in_stock {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.status-chip.assigned {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status-chip.installed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Reuse icon-btn & pagination from FE css */

@@ -1,0 +1,82 @@
+/* ===== PAGE WRAPPER ===== */
+.device-detail-wrapper {
+    max-width: 100%;
+    margin: 35px 100px;
+    /* ✅ same as FE */
+}
+
+/* ===== HEADER STRIP ===== */
+.device-detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* ===== STATUS BADGE ===== */
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.status.active {
+    background: #e6f7ed;
+    color: #1a7f37;
+}
+
+/* ===== CARD GRID ===== */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    /* ✅ EXACT same gap */
+    margin-bottom: 20px;
+}
+
+/* ===== CARD ===== */
+.card {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Full-width card */
+.card.full {
+    grid-column: span 2;
+}
+
+/* ===== ACTIONS ===== */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.actions button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.actions .secondary {
+    background: #f1f5f9;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .device-detail-wrapper {
+        margin: 20px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card.full {
+        grid-column: span 1;
+    }
+}

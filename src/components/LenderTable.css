@@ -1,0 +1,15 @@
+.table-wrapper {
+  background: var(--bg-surface);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: var(--transition-theme);
+}
+
+thead {
+  background: var(--bg-muted);
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+}

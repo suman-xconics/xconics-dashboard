@@ -1,0 +1,121 @@
+.warehouse-container {
+  padding: 24px;
+  max-width: 100%;
+  margin-bottom: auto;
+  margin-top: 35px;
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+.warehouse-container h2 {
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+/* FORM CARD */
+.warehouse-form {
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  background: #f9fafb;
+
+}
+
+/* ✅ TWO COLUMN GRID */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* ✅ TWO COLUMNS */
+  gap: 16px;
+}
+
+/* ✅ FULL WIDTH FIELDS (Address, Remarks) */
+.form-grid .full {
+  grid-column: span 2;
+  /* ✅ TAKE FULL WIDTH */
+}
+
+/* LABEL */
+label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+  /* color: #374151; */
+}
+
+/* INPUTS */
+input,
+select,
+textarea {
+  width: 100%;
+  /* ✅ ENSURES FULL WIDTH */
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box;
+}
+
+/* TEXTAREA */
+textarea {
+  resize: none;
+}
+
+/* ACTION BUTTONS */
+.actions {
+  margin-top: 20px;
+  text-align: right;
+}
+
+button {
+  padding: 10px 20px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+body[data-theme="dark"] .warehouse-container h2 {
+  color: #ffffff;
+  /* ✅ Create Warehouse title */
+}
+/* Two column form */
+.two-column {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Error text */
+.error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #dc2626;
+}
+
+/* Dark mode heading fix */
+body[data-theme="dark"] .warehouse-container h2 {
+  color: #f9fafb;
+}
+
+/* ===== ACTION BUTTON FIX ===== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;               /* 👈 ensures buttons don't overlap */
+  margin-top: 24px;
+}
+
+/* Secondary (Back) button */
+.actions .secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+/* Dark mode Back button */
+body[data-theme="dark"] .actions .secondary {
+  background: #1f2937;
+  color: #f9fafb;
+}
+

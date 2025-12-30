@@ -1,0 +1,21 @@
+.device-card {
+    background: #ffffff;
+    margin: 35px 100px 0 100px;
+}
+
+.device-form section {
+    margin-bottom: 25px;
+}
+
+.device-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 16px;
+}
+
+.device-form input,
+.device-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

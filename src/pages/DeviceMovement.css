@@ -1,0 +1,104 @@
+/* ===== Device Movement Page ===== */
+
+.device-movement-page {
+    padding: 16px 20px;
+    background-color: #f5f7fb;
+    min-height: calc(100vh - 64px);
+}
+
+/* ===== Card Wrapper ===== */
+
+.device-movement-table-wrapper {
+    margin-top: 16px;
+}
+
+.device-movement-table-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    overflow-x: auto;
+}
+
+/* ===== Table ===== */
+
+.device-movement-table-card table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.device-movement-table-card thead {
+    background-color: #f0f3f8;
+}
+
+.device-movement-table-card th {
+    text-align: left;
+    padding: 12px 10px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #e0e4ea;
+    white-space: nowrap;
+}
+
+.device-movement-table-card td {
+    padding: 10px;
+    border-bottom: 1px solid #eef1f6;
+    color: #444;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* ===== Status Chips ===== */
+
+.status-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-chip.in_transit {
+    background-color: #fff4cc;
+    color: #b58100;
+}
+
+.status-chip.received {
+    background-color: #e6f6ee;
+    color: #1d7f4f;
+}
+
+.status-chip.installed {
+    background-color: #e8f0ff;
+    color: #2952cc;
+}
+
+.status-chip.returned {
+    background-color: #fdecea;
+    color: #b42318;
+}
+
+/* ===== Action Button ===== */
+
+.icon-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    color: #2563eb;
+}
+
+.icon-btn:hover {
+    color: #1e40af;
+}
+
+/* ===== Empty State ===== */
+
+.device-movement-empty {
+    text-align: center;
+    padding: 40px;
+    color: #777;
+    font-size: 14px;
+}

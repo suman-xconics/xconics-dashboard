@@ -1,0 +1,198 @@
+/* Wrapper (side margin only) */
+.lender-table-wrapper {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+/* Card */
+.lender-table-card {
+  background: #ffffff;
+  overflow: hidden;
+}
+
+body[data-theme="dark"] .lender-table-card {
+  background: #020617;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f8fafc;
+}
+
+body[data-theme="dark"] thead {
+  background: #020617;
+}
+
+th,
+td {
+  padding: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  /* color: #0f172a; */
+}
+
+body[data-theme="dark"] th,
+body[data-theme="dark"] td {
+  color: slategray;
+  border-bottom-color: #1e293b;
+}
+
+/* =====================
+   TOGGLE SWITCH
+   ===================== */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  transition: background 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+/* Active */
+.switch input:checked+.slider {
+  background-color: #6366f1;
+}
+
+.switch input:checked+.slider::before {
+  transform: translateX(20px);
+}
+
+/* Dark mode fine-tuning */
+body[data-theme="dark"] .slider {
+  background-color: #334155;
+}
+
+body[data-theme="dark"] .switch input:checked+.slider {
+  background-color: #818cf8;
+}
+
+/* =====================
+   EDIT ICON BUTTON
+   ===================== */
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(99, 102, 241, 0.12);
+  transform: scale(1.05);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Dark mode */
+body[data-theme="dark"] .icon-btn {
+  color: #c7d2fe;
+}
+
+body[data-theme="dark"] .icon-btn:hover {
+  background: rgba(129, 140, 248, 0.18);
+}
+
+th {
+  cursor: pointer;
+  user-select: none;
+}
+
+th svg {
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* Loading Skeleton */
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+
+/* Delete button styling */
+.delete-btn {
+  color: #dc3545 !important;
+}
+
+.delete-btn:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Small spinner for delete button */
+.spinner-small {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #dc3545;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,139 @@
+/* =====================
+   CONTAINER
+   ===================== */
+
+.create-user-container {
+  padding: 40px;
+  max-width: 100%;
+  margin: 35px 100px 0 100px;
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* =====================
+   TITLE
+   ===================== */
+
+.create-user-container h1 {
+  margin-bottom: 30px;
+  color: var(--text-primary);
+}
+
+/* =====================
+   FORM LAYOUT
+   ===================== */
+
+.create-user-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =====================
+   FORM GROUP
+   ===================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+/* LABEL */
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--text-primary);
+  /* 🔑 ensure visibility */
+}
+
+/* =====================
+   INPUTS & SELECT
+   ===================== */
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+
+  outline: none;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* PLACEHOLDER */
+.form-group input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* FOCUS STATE */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+}
+
+/* =====================
+   DARK MODE FIXES
+   ===================== */
+
+body[data-theme="dark"] .form-group input,
+body[data-theme="dark"] .form-group select {
+  background-color: #020617;
+  /* deep dark */
+  color: #f9fafb;
+  /* white text */
+  border-color: #334155;
+}
+
+body[data-theme="dark"] .form-group input::placeholder {
+  color: #94a3b8;
+  /* soft gray */
+}
+
+body[data-theme="dark"] .form-group label {
+  color: #e5e7eb;
+}
+
+/* =====================
+   SUBMIT BUTTON
+   ===================== */
+
+.submit-btn {
+  padding: 12px;
+  background-color: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.submit-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* =====================
+   DARK MODE BUTTON
+   ===================== */
+
+body[data-theme="dark"] .submit-btn {
+  background-color: #2563eb;
+}
+
+body[data-theme="dark"] .submit-btn:hover {
+  background-color: #1e40af;
+}

@@ -1,0 +1,202 @@
+/* =====================
+   WRAPPER
+   ===================== */
+.fe-table-wrapper {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+/* =====================
+   CARD
+   ===================== */
+.fe-table-card {
+  background: #ffffff;
+  overflow: hidden;
+}
+
+body[data-theme="dark"] .fe-table-card {
+  background: #020617;
+}
+
+/* =====================
+   TABLE
+   ===================== */
+.fe-table-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fe-table-card thead {
+  background: #f8fafc;
+}
+
+body[data-theme="dark"] .fe-table-card thead {
+  background: #020617;
+}
+
+.fe-table-card th,
+.fe-table-card td {
+  padding: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  color: #0f172a;
+}
+
+body[data-theme="dark"] .fe-table-card th,
+body[data-theme="dark"] .fe-table-card td {
+  color: #f9fafb;
+  border-bottom-color: #1e293b;
+}
+
+/* =====================
+   SORTABLE HEADER
+   ===================== */
+.fe-table-card th {
+  cursor: pointer;
+  user-select: none;
+}
+
+.fe-table-card th svg {
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* =====================
+   TOGGLE SWITCH
+   ===================== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  transition: background 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  top: 2px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+/* Active */
+.switch input:checked + .slider {
+  background-color: #6366f1;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Dark mode */
+body[data-theme="dark"] .slider {
+  background-color: #334155;
+}
+
+body[data-theme="dark"] .switch input:checked + .slider {
+  background-color: #818cf8;
+}
+
+/* =====================
+   EDIT ICON BUTTON
+   ===================== */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(99, 102, 241, 0.12);
+  transform: scale(1.05);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Dark mode */
+body[data-theme="dark"] .icon-btn {
+  color: #c7d2fe;
+}
+
+body[data-theme="dark"] .icon-btn:hover {
+  background: rgba(129, 140, 248, 0.18);
+}
+
+/* =====================
+   PAGINATION
+   ===================== */
+.pagination {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 12px 16px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.pagination button:hover {
+  background: #f1f5f9;
+}
+
+.pagination button.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Dark mode pagination */
+body[data-theme="dark"] .pagination button {
+  background: #020617;
+  border-color: #1e293b;
+  color: #f9fafb;
+}
+
+body[data-theme="dark"] .pagination button:hover {
+  background: #020617;
+}
+
+body[data-theme="dark"] .pagination button.active {
+  background: #818cf8;
+  border-color: #818cf8;
+}

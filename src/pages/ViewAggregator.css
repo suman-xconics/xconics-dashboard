@@ -1,0 +1,53 @@
+/* Wrapper */
+.view-card-wrapper {
+    margin: 35px 100px;
+}
+
+/* Main card */
+.view-card {
+    padding: 24px;
+}
+
+/* Grid layout (form-like) */
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 40px;
+}
+
+/* Each field */
+.view-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.view-field label {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.view-field span {
+    font-size: 15px;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+/* Actions */
+.view-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Secondary button */
+.add-more-btn.secondary {
+    background: #e5e7eb;
+    color: #020617;
+}
+
+body[data-theme="dark"] .add-more-btn.secondary {
+    background: #334155;
+    color: #f9fafb;
+}

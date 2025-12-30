@@ -1,0 +1,188 @@
+/* =====================
+   HEADER BASE
+   ===================== */
+
+.header {
+  height: 64px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+  transition: var(--transition-theme);
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* =====================
+   MENU BUTTON
+   ===================== */
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ffff;
+}
+
+/* =====================
+   SEARCH
+   ===================== */
+
+.search-wrapper {
+  position: relative;
+}
+
+.search {
+  padding: 8px 14px 8px 40px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.search::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Search icon */
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  opacity: 0.6;
+}
+
+/* =====================
+   DARK MODE SEARCH OVERRIDE
+   ===================== */
+
+body[data-theme="dark"] .search {
+  background: var(--icon-bg);
+  /* grayish */
+  color: #111827;
+  /* black text */
+  border-color: #d1d5db;
+}
+
+/* body[data-theme="dark"] .search::placeholder {
+  color: #374151;
+  
+} */
+
+body[data-theme="dark"] .search-icon {
+  filter: brightness(0) saturate(100%);
+  /* black icon */
+  opacity: 0.8;
+}
+
+
+/* =====================
+   SHARED ICON CIRCLE
+   ===================== */
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  /* 🔒 SAME IN LIGHT & DARK */
+  background: var(--icon-bg);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* icon color changes via theme */
+  color: var(--text-primary);
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease;
+}
+
+.icon-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.icon-circle:active {
+  transform: scale(0.95);
+}
+
+/* Dark mode: ONLY icon color changes */
+body[data-theme="dark"] .icon-circle {
+  color: #f9fafb;
+}
+
+
+/* =====================
+   DARK MODE ICON FIX
+   ===================== */
+
+body[data-theme="dark"] .icon-circle {
+  /* background: #020617;      slightly darker */
+  color: black;
+  /*pure light for icons */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+/* =====================
+   THEME TOGGLE
+   ===================== */
+
+.lucide-theme-toggle {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* =====================
+   NOTIFICATION
+   ===================== */
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 999px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* =====================
+   PROFILE
+   ===================== */
+
+.profile-btn {
+  border: none;
+  background: none;
+  padding: 0;
+}
