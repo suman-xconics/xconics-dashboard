@@ -263,3 +263,79 @@ th {
     background-position: -200% 0;
   }
 }
+
+.summary-card.yellow {
+  background-color: #fff9c4;
+  border-left: 4px solid #f9a825;
+}
+
+.summary-card.yellow h4,
+.summary-card.yellow p {
+  color: #f57f17;
+}
+
+.summary-card.pink {
+  background-color: #fce4ec;
+  border-left: 4px solid #c2185b;
+}
+
+.summary-card.pink h4,
+.summary-card.pink p {
+  color: #c2185b;
+}
+
+.summary-card.blue {
+  background-color: #e3f2fd;
+  border-left: 4px solid #1976d2;
+}
+
+.summary-card.blue h4,
+.summary-card.blue p {
+  color: #1976d2;
+}
+
+.summary-card.orange {
+  background-color: #fff3e0;
+  border-left: 4px solid #f57c00;
+}
+
+.summary-card.orange h4,
+.summary-card.orange p {
+  color: #f57c00;
+}
+
+.summary-card.teal {
+  background-color: #e0f2f1;
+  border-left: 4px solid #00796b;
+}
+
+.summary-card.teal h4,
+.summary-card.teal p {
+  color: #00796b;
+}
+
+.summary-card.green {
+  background-color: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+}
+
+.summary-card.green h4,
+.summary-card.green p {
+  color: #2e7d32;
+}
+
+.summary-card.red {
+  background-color: #ffebee;
+  border-left: 4px solid #c62828;
+}
+
+.summary-card.red h4,
+.summary-card.red p {
+  color: #c62828;
+}
+
+.summary-card.active {
+  border: 2px solid #1976d2;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  transform: translateY(-2px);
+}

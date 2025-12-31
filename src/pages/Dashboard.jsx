@@ -56,8 +56,8 @@ const formatDateForInput = (isoDateString) => {
 const getStatusBadgeStyle = (status) => {
   const styles = {
     NEW: { backgroundColor: "#e3f2fd", color: "#1976d2" },
-    PENDING: { backgroundColor: "#fff9c4", color: "#f57f17" },
-    ASSIGNED: { backgroundColor: "#fff3e0", color: "#f57c00" },
+    PENDING:  { backgroundColor: "#e3f2fd", color: "#1976d2" },
+    ASSIGNED: { backgroundColor: "#000000", color: "#f57c00" },
     ACCEPTED: { backgroundColor: "#e0f2f1", color: "#00796b" },
     IN_PROGRESS: { backgroundColor: "#fce4ec", color: "#c2185b" },
     COMPLETED: { backgroundColor: "#e8f5e9", color: "#2e7d32" },
