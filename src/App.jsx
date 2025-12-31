@@ -48,6 +48,7 @@ import ReceiveDeviceMovement from "./pages/ReceiveDeviceMovement";
 import DeviceMovementDetail from "./pages/DeviceMovementDetail";
 
 import "./App.css";
+import Footer from "./components/Footer";
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -140,7 +141,7 @@ export default function App() {
           <Route path="/device-movement/receive/:movementId" element={<ReceiveDeviceMovement />} />
           <Route path="/device-movement/view/:id" element={<DeviceMovementDetail />} />
         </Routes>
-
+<Footer />
       </div>
 
       {/* Mobile overlay */}
