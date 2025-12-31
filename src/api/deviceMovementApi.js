@@ -39,16 +39,31 @@ export const getDeviceMovementById = async (id) => {
   }
 };
 
+export const createDeviceMovement = async (payload) => {
+  try {
+    const response = await API.post("/deviceMovement/create", payload);
+    return {
+      success: true,
+      data: response.data.data,
+      message: response.data.message || "Device movement created successfully",
+    };
+  } catch (error) {
+    console.error("Error creating device movement:", error);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || "Failed to create device movement",
+    };
+  }
+};
+
+// ✅ FIXED: Matching Prisma Schema enum DeviceMovementType
 export const MOVEMENT_TYPES = {
   PROD_TO_WH: "PROD_TO_WH",
   WH_TO_ENGINEER: "WH_TO_ENGINEER",
-  ENGINEER_TO_WH: "ENGINEER_TO_WH",
   ENGINEER_TO_VEHICLE: "ENGINEER_TO_VEHICLE",
-  VEHICLE_TO_ENGINEER: "VEHICLE_TO_ENGINEER",
-  WH_TO_VEHICLE: "WH_TO_VEHICLE",
-  VEHICLE_TO_WH: "VEHICLE_TO_WH",
 };
 
+// ✅ FIXED: Matching Prisma Schema enum MovementEntityType
 export const ENTITY_TYPES = {
   PRODUCTION_WAREHOUSE: "PRODUCTION_WAREHOUSE",
   WAREHOUSE: "WAREHOUSE",
@@ -56,9 +71,9 @@ export const ENTITY_TYPES = {
   VEHICLE: "VEHICLE",
 };
 
+// ✅ FIXED: Matching Prisma Schema enum DeviceMovementStatus
 export const MOVEMENT_STATUSES = {
   IN_TRANSIT: "IN_TRANSIT",
-  DELIVERED: "DELIVERED",
-  RETURNED: "RETURNED",
+  RECEIVED: "RECEIVED",
   CANCELLED: "CANCELLED",
 };
