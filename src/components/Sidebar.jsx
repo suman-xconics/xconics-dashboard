@@ -153,6 +153,29 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
           </span>
           {isOpen && <span className="nav-label">Lender Branch</span>}
         </NavLink>
+        {/* Vehicle List */}
+        <NavLink
+          to="/tracker"
+          className={({ isActive }) =>
+            `nav-item ${isActive ? "active" : ""}`
+          }
+          onClick={handleNavClick}
+        >
+          <span className="nav-icon"><MapPin size={20} /></span>
+          {isOpen && <span className="nav-label">Vehicle List</span>}
+        </NavLink>
+
+        {/* ✅ NEW VEHICLE TRACKING */}
+        <NavLink
+          to="/vehicle-tracking"
+          className={({ isActive }) =>
+            `nav-item ${isActive ? "active" : ""}`
+          }
+          onClick={handleNavClick}
+        >
+          <span className="nav-icon"><List size={20} /></span>
+          {isOpen && <span className="nav-label">Vehicle Tracking</span>}
+        </NavLink>
       </nav>
 
       {/* ===== FOOTER ===== */}
