@@ -46,6 +46,24 @@ const formatDateTime = (isoDateString) => {
   }
 };
 
+/**
+ * Get login status badge styling
+ */
+const getLoginStatusBadge = (loginStatus) => {
+  if (loginStatus === "LOGGED_IN") {
+    return {
+      text: "Logged In",
+      backgroundColor: "#e8f5e9",
+      color: "#2e7d32",
+    };
+  }
+  return {
+    text: "Not Logged In",
+    backgroundColor: "#fff3e0",
+    color: "#f57c00",
+  };
+};
+
 export default function FieldEngineerDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -129,6 +147,8 @@ export default function FieldEngineerDetail() {
     );
   }
 
+  const loginStatusBadge = getLoginStatusBadge(engineer.LoginStatus);
+
   return (
     <div className="lender-page">
       {/* PAGE HEADER */}
@@ -144,9 +164,23 @@ export default function FieldEngineerDetail() {
               ID: {engineer.id}
             </p>
           </div>
-          <span className={`status ${engineer.status?.toLowerCase()}`}>
-            {engineer.status}
-          </span>
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <span
+              style={{
+                padding: "0.5rem 1rem",
+                borderRadius: "4px",
+                fontSize: "0.9rem",
+                fontWeight: "500",
+                backgroundColor: loginStatusBadge.backgroundColor,
+                color: loginStatusBadge.color,
+              }}
+            >
+              {loginStatusBadge.text}
+            </span>
+            <span className={`status ${engineer.status?.toLowerCase()}`}>
+              {engineer.status}
+            </span>
+          </div>
         </div>
 
         {/* INFO CARDS */}
@@ -156,7 +190,7 @@ export default function FieldEngineerDetail() {
             <p><b>Name:</b> {engineer.engineerName}</p>
             <p><b>Employment Type:</b> {engineer.employmentType}</p>
             <p><b>Branch Code:</b> {engineer.branchCode}</p>
-            <p><b>Aggregator ID:</b> {engineer.aggregatorId}</p>
+            <p><b>Aggregator ID:</b> {engineer.aggregatorId || "N/A"}</p>
           </div>
 
           <div className="card">
@@ -178,26 +212,77 @@ export default function FieldEngineerDetail() {
           </div>
         </div>
 
+        {/* SERVING PINCODES */}
+        <div className="card">
+          <h4>Serving Pincodes</h4>
+          {engineer.pincodeMappings && engineer.pincodeMappings.length > 0 ? (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "0.5rem",
+                  padding: "1rem 0",
+                }}
+              >
+                {engineer.pincodeMappings.map((mapping, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#e3f2fd",
+                      color: "#1976d2",
+                      borderRadius: "20px",
+                      fontSize: "0.9rem",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {mapping.mappingPincode}
+                  </span>
+                ))}
+              </div>
+              <p style={{ color: "#666", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+                Total: {engineer.pincodeMappings.length} pincode(s)
+              </p>
+            </div>
+          ) : (
+            <p style={{ padding: "1rem", color: "#666" }}>No pincodes assigned</p>
+          )}
+        </div>
+
         {/* SKILL SET */}
         <div className="card">
           <h4>Skill Set</h4>
           {engineer.skillSet && engineer.skillSet.length > 0 ? (
-            <table className="skill-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Skill</th>
-                </tr>
-              </thead>
-              <tbody>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "0.5rem",
+                  padding: "1rem 0",
+                }}
+              >
                 {engineer.skillSet.map((skill, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{skill}</td>
-                  </tr>
+                  <span
+                    key={index}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#f3e5f5",
+                      color: "#7b1fa2",
+                      borderRadius: "20px",
+                      fontSize: "0.9rem",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {skill}
+                  </span>
                 ))}
-              </tbody>
-            </table>
+              </div>
+              <p style={{ color: "#666", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+                Total: {engineer.skillSet.length} skill(s)
+              </p>
+            </div>
           ) : (
             <p style={{ padding: "1rem", color: "#666" }}>No skills assigned</p>
           )}

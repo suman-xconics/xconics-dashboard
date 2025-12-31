@@ -213,47 +213,79 @@ export default function FieldEngineerTableCard() {
     setCurrentPage(1);
   };
 
+  /* =====================
+     LOGIN STATUS BADGE
+     ===================== */
+  const getLoginStatusBadge = (loginStatus) => {
+    if (loginStatus === "LOGGED_IN") {
+      return {
+        backgroundColor: "#e8f5e9",
+        color: "#2e7d32",
+      };
+    }
+    return {
+      backgroundColor: "#fff3e0",
+      color: "#f57c00",
+    };
+  };
+
+  /* =====================
+     FORMAT PINCODES
+     ===================== */
+  const formatPincodes = (pincodeMappings) => {
+    if (!pincodeMappings || pincodeMappings.length === 0) {
+      return "-";
+    }
+    
+    const pincodes = pincodeMappings
+      .map((mapping) => mapping.mappingPincode)
+      .filter(Boolean) // Remove null/undefined
+      .join(", ");
+    
+    return pincodes || "-";
+  };
+
   return (
     <div className="fe-table-wrapper">
       <div className="card fe-table-card">
-          <div style={{ padding: "1rem", borderBottom: "1px solid #e0e0e0" }}>
-            <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-              <input
-                type="text"
-                placeholder="Search field engineers..."
-                value={searchTerm}
-                onChange={handleSearch}
-                style={{
-            width: "50%",
-            padding: "0.5rem",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            fontSize: "0.9rem",
-                }}
-              />
+        <div style={{ padding: "1rem", borderBottom: "1px solid #e0e0e0" }}>
+          <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+            <input
+              type="text"
+              placeholder="Search field engineers..."
+              value={searchTerm}
+              onChange={handleSearch}
+              style={{
+                width: "50%",
+                padding: "0.5rem",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "0.9rem",
+              }}
+            />
 
-              <select
-                value={employmentTypeFilter}
-                onChange={(e) => {
-            setEmploymentTypeFilter(e.target.value);
-            setCurrentPage(1);
-                }}
-                style={{
-            width: "50%",
-            padding: "0.5rem",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            fontSize: "0.9rem",
-                }}
-              >
-                <option value="">All Employment Types</option>
-                <option value="XCONICS">Xconics</option>
-                <option value="AGGREGATOR">Aggregator</option>
-              </select>
-            </div>
+            <select
+              value={employmentTypeFilter}
+              onChange={(e) => {
+                setEmploymentTypeFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              style={{
+                width: "50%",
+                padding: "0.5rem",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "0.9rem",
+              }}
+            >
+              <option value="">All Employment Types</option>
+              <option value="XCONICS">Xconics</option>
+              <option value="AGGREGATOR">Aggregator</option>
+            </select>
           </div>
+        </div>
 
-          {/* ERROR MESSAGE */}
+        {/* ERROR MESSAGE */}
         {error && (
           <div
             style={{
@@ -289,8 +321,12 @@ export default function FieldEngineerTableCard() {
                 State <SortIcon column="state" />
               </th>
               <th>Base Location</th>
+              <th>Serving Pincodes</th>
               <th onClick={() => handleSort("status")}>
                 Status <SortIcon column="status" />
+              </th>
+              <th onClick={() => handleSort("LoginStatus")}>
+                Login Status <SortIcon column="LoginStatus" />
               </th>
               <th>Action</th>
             </tr>
@@ -301,7 +337,7 @@ export default function FieldEngineerTableCard() {
               // LOADING SKELETON
               [...Array(5)].map((_, index) => (
                 <tr key={index}>
-                  {[...Array(9)].map((_, colIndex) => (
+                  {[...Array(11)].map((_, colIndex) => (
                     <td key={colIndex}>
                       <div className="skeleton-line" />
                     </td>
@@ -311,7 +347,7 @@ export default function FieldEngineerTableCard() {
             ) : sortedData.length === 0 ? (
               // NO DATA
               <tr>
-                <td colSpan="9" style={{ textAlign: "center", padding: "2rem" }}>
+                <td colSpan="11" style={{ textAlign: "center", padding: "2rem" }}>
                   No field engineers found
                 </td>
               </tr>
@@ -339,6 +375,23 @@ export default function FieldEngineerTableCard() {
                   <td>{eng.state}</td>
                   <td>{eng.baseLocation}</td>
 
+                  {/* SERVING PINCODES */}
+                  <td>
+                    <span
+                      style={{
+                        fontSize: "0.85rem",
+                        display: "block",
+                        maxWidth: "200px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={formatPincodes(eng.pincodeMappings)}
+                    >
+                      {formatPincodes(eng.pincodeMappings)}
+                    </span>
+                  </td>
+
                   {/* STATUS TOGGLE */}
                   <td>
                     <label className="switch">
@@ -355,6 +408,23 @@ export default function FieldEngineerTableCard() {
                         Updating...
                       </span>
                     )}
+                  </td>
+
+                  {/* LOGIN STATUS */}
+                  <td>
+                    <span
+                      style={{
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        fontSize: "0.8rem",
+                        display: "inline-block",
+                        minWidth: "90px",
+                        textAlign: "center",
+                        ...getLoginStatusBadge(eng.LoginStatus),
+                      }}
+                    >
+                      {eng.LoginStatus?.replace(/_/g, " ") || "NOT LOGGED IN"}
+                    </span>
                   </td>
 
                   {/* ACTIONS */}
