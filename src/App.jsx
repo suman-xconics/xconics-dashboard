@@ -47,6 +47,13 @@ import CreateDeviceMovement from "./pages/CreateDeviceMovement";
 import ReceiveDeviceMovement from "./pages/ReceiveDeviceMovement";
 import DeviceMovementDetail from "./pages/DeviceMovementDetail";
 
+/* TRACKER */
+import TrackerPage from "./pages/TrackerPage";
+import TrackerMap from "./pages/TrackerMap";
+
+import VehicleTracking from "./pages/VehicleTracking";
+
+
 import "./App.css";
 import Footer from "./components/Footer";
 
@@ -140,8 +147,17 @@ export default function App() {
           <Route path="/device-movement/create/:deviceId" element={<CreateDeviceMovement />} />
           <Route path="/device-movement/receive/:movementId" element={<ReceiveDeviceMovement />} />
           <Route path="/device-movement/view/:id" element={<DeviceMovementDetail />} />
+          {/* TRACKER */}
+          <Route path="/tracker" element={<TrackerPage />} />
+          <Route path="/tracker/map/:vehicleNo" element={<TrackerMap />} />
+
+          {/* VEHICLE TRACKING */}
+          <Route path="/vehicle-tracking" element={<VehicleTracking />} />
+
+
         </Routes>
-<Footer />
+        <Footer />
+
       </div>
 
       {/* Mobile overlay */}

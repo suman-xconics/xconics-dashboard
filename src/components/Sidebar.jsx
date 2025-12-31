@@ -8,11 +8,13 @@ import {
   Wrench,        // Field Engineer
   Warehouse,     // Warehouse
   Cpu,           // Device
-  Move           // Device Movement
+  Move,          // Device Movement
+  MapPin,        // Vehicle List
+  List           // Vehicle Tracking
 } from "lucide-react";
 import "./Sidebar.css";
 
-// Brand assets
+/* Brand assets */
 import xconicsMini from "../assets/xconics mini logo.jpeg";
 import xconicsText from "../assets/Xconics_logo_blue (3).png";
 
@@ -28,14 +30,19 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
 
   return (
     <aside
-      className={`sidebar ${isOpen ? "open" : "collapsed"} ${isMobile ? "mobile" : ""
-        }`}
+      className={`sidebar ${isOpen ? "open" : "collapsed"} ${
+        isMobile ? "mobile" : ""
+      }`}
     >
       {/* ===== BRAND ===== */}
       <div className="brand">
         <img src={xconicsMini} alt="Xconics" className="brand-icon" />
         {isOpen && (
-          <img src={xconicsText} alt="Xconics" className="brand-text-logo" />
+          <img
+            src={xconicsText}
+            alt="Xconics"
+            className="brand-text-logo"
+          />
         )}
       </div>
 
@@ -43,8 +50,7 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
       <nav className="nav">
         {/* Dashboard */}
         <NavLink
-          to="/"
-          end
+          to="/dashboard"
           className={({ isActive }) =>
             `nav-item ${isActive ? "active" : ""}`
           }
@@ -112,7 +118,7 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
           {isOpen && <span className="nav-label">Warehouse</span>}
         </NavLink>
 
-        {/* Device */}
+        {/* Devices */}
         <NavLink
           to="/devices"
           className={({ isActive }) =>
@@ -153,6 +159,7 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
           </span>
           {isOpen && <span className="nav-label">Lender Branch</span>}
         </NavLink>
+
         {/* Vehicle List */}
         <NavLink
           to="/tracker"
@@ -161,11 +168,13 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
           }
           onClick={handleNavClick}
         >
-          <span className="nav-icon"><MapPin size={20} /></span>
+          <span className="nav-icon">
+            <MapPin size={20} strokeWidth={1.8} />
+          </span>
           {isOpen && <span className="nav-label">Vehicle List</span>}
         </NavLink>
 
-        {/* ✅ NEW VEHICLE TRACKING */}
+        {/* Vehicle Tracking */}
         <NavLink
           to="/vehicle-tracking"
           className={({ isActive }) =>
@@ -173,7 +182,9 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
           }
           onClick={handleNavClick}
         >
-          <span className="nav-icon"><List size={20} /></span>
+          <span className="nav-icon">
+            <List size={20} strokeWidth={1.8} />
+          </span>
           {isOpen && <span className="nav-label">Vehicle Tracking</span>}
         </NavLink>
       </nav>
