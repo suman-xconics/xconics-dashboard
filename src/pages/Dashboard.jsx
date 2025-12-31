@@ -126,7 +126,9 @@ export default function Dashboard() {
           r.vehicleNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           r.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           r.customerMobile?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.branchId?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          r.branchId?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+          r.branch?.branchCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          r.branch?.branchName?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -136,7 +138,6 @@ export default function Dashboard() {
   const counts = useMemo(() => {
     return {
       total: requisitions.length,
-      new: requisitions.filter((r) => r.status === "NEW").length,
       pending: requisitions.filter((r) => r.status === "PENDING").length,
       assigned: requisitions.filter((r) => r.status === "ASSIGNED").length,
       accepted: requisitions.filter((r) => r.status === "ACCEPTED").length,
@@ -184,7 +185,6 @@ export default function Dashboard() {
       {/* SUMMARY CARDS */}
       <div className="summary-grid">
         <SummaryCard title="Total" value={counts.total} color="blue" onClick={() => setFilter("ALL")} active={filter === "ALL"} />
-        <SummaryCard title="New" value={counts.new} color="sky" onClick={() => setFilter("NEW")} active={filter === "NEW"} />
         <SummaryCard title="Pending" value={counts.pending} color="yellow" onClick={() => setFilter("PENDING")} active={filter === "PENDING"} />
         <SummaryCard title="Assigned" value={counts.assigned} color="orange" onClick={() => setFilter("ASSIGNED")} active={filter === "ASSIGNED"} />
         <SummaryCard title="Accepted" value={counts.accepted} color="teal" onClick={() => setFilter("ACCEPTED")} active={filter === "ACCEPTED"} />
@@ -197,7 +197,7 @@ export default function Dashboard() {
       <div style={{ padding: "0 1.5rem", marginBottom: "1rem" }}>
         <input
           type="text"
-          placeholder="Search by requisition no, vehicle no, customer name, mobile, or branch ID..."
+          placeholder="Search by requisition no, vehicle no, customer name, branch code, or branch name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -231,11 +231,14 @@ export default function Dashboard() {
           <thead>
             <tr>
               <th>Requisition No</th>
-              <th>Branch ID</th>
+              <th>Branch Code</th>
+              <th>Branch Name</th>
+              {/* <th>Branch ID</th> */}
               <th>Vehicle No</th>
               <th>Customer Name</th>
-              <th>Mobile</th>
-              <th>Device Type</th>
+                            <th>Pincode</th>
+              <th>District</th>
+              <th>State</th>
               <th>Priority</th>
               <th>Requested At</th>
               <th>Preferred Date</th>
@@ -248,7 +251,7 @@ export default function Dashboard() {
             {loading ? (
               [...Array(5)].map((_, index) => (
                 <tr key={index}>
-                  {[...Array(12)].map((_, colIndex) => (
+                  {[...Array(14)].map((_, colIndex) => (
                     <td key={colIndex}>
                       <div className="skeleton-line" />
                     </td>
@@ -257,7 +260,7 @@ export default function Dashboard() {
               ))
             ) : filteredRequisitions.length === 0 ? (
               <tr>
-                <td colSpan="12" style={{ textAlign: "center", padding: "2rem" }}>
+                <td colSpan="14" style={{ textAlign: "center", padding: "2rem" }}>
                   No requisitions found
                 </td>
               </tr>
@@ -267,11 +270,14 @@ export default function Dashboard() {
                   <td>
                     <strong>{req.requisitionNo}</strong>
                   </td>
-                  <td>{req.branchId || "N/A"}</td>
+                  <td>{req.branch?.branchCode || "N/A"}</td>
+                  <td>{req.branch?.branchName || "N/A"}</td>
+                  {/* <td>{req.branchId || "N/A"}</td> */}
                   <td>{req.vehicleNo}</td>
                   <td>{req.customerName}</td>
-                  <td>{req.customerMobile}</td>
-                  <td>{req.deviceType}</td>
+                  <td>{req.pincode || "N/A"}</td>
+                  <td>{req.district || "N/A"}</td>
+                  <td>{req.state || "N/A"}</td>
                   <td>
                     <span
                       style={{
@@ -633,7 +639,7 @@ function RequisitionModal({ requisition, onClose }) {
           <div>
             <h2 style={{ margin: 0 }}>{requisition.requisitionNo}</h2>
             <p style={{ margin: "0.5rem 0 0 0", color: "#666", fontSize: "0.9rem" }}>
-              ID: {requisition.id} | Branch ID: {requisition.branchId || "N/A"}
+              ID: {requisition.id} | Branch: {requisition.branch?.branchName || "N/A"} ({requisition.branch?.branchCode || "N/A"})
             </p>
           </div>
           <button className="modal-close" onClick={onClose}>
@@ -665,6 +671,24 @@ function RequisitionModal({ requisition, onClose }) {
             >
               {requisition.priority} Priority
             </span>
+          </div>
+
+          <div className="modal-section">
+            <h4>Branch Information</h4>
+            <div className="info-grid">
+              <div>
+                <label>Branch Code</label>
+                <p>{requisition.branch?.branchCode || "N/A"}</p>
+              </div>
+              <div>
+                <label>Branch Name</label>
+                <p>{requisition.branch?.branchName || "N/A"}</p>
+              </div>
+              <div>
+                <label>Branch ID</label>
+                <p>{requisition.branchId || "N/A"}</p>
+              </div>
+            </div>
           </div>
 
           <div className="modal-section">
