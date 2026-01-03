@@ -502,14 +502,22 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "600px" }}>
         <div className="modal-header">
           <div>
-            <h2 style={{ margin: 0 }}>Assign Requisition</h2>
+            <h2 style={{ margin: 0 , color: "#000"}}>Assign Requisition</h2>
             <p style={{ margin: "0.5rem 0 0 0", color: "#666", fontSize: "0.9rem" }}>
               {requisition.requisitionNo}
             </p>
           </div>
-          <button className="modal-close" onClick={onClose}>
-            <X size={24} />
-          </button>
+<button className="modal-close" onClick={onClose}
+
+>
+  <X size={24}
+  style={
+    {
+      color: "#000"
+    }
+  } />
+</button>
+
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -685,6 +693,7 @@ function RequisitionModal({ requisition, onClose }) {
 >
   <X size={20} />
 </button>
+
 
         </div>
 

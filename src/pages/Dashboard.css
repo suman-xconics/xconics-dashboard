@@ -348,3 +348,50 @@ th {
 .modal-close-btn svg{
   stroke: currentColor !important;    /* keep icon in sync */ /* [web:41] */
 }
+
+/* Header layout (applies to both modals) */
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+/* Close button — force black */
+.modal-close-btn{
+  appearance:none;
+  background:none;
+  border:none;
+  padding:0;
+  margin:0;
+
+  width:36px;
+  height:36px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  color:#000 !important;              /* Lucide uses currentColor */ /* [web:41] */
+  border-radius:8px;
+}
+
+/* Force the SVG stroke to follow the button color */
+.modal-close-btn svg{
+  stroke: currentColor !important;    /* ensure icon uses parent color */ /* [web:41] */
+}
+
+.modal-close-btn:hover{ background:#f2f2f2; }
+.modal-close-btn:active{ background:#e9e9e9; }
+
+.modal-close-btn:focus-visible{
+  outline:2px solid #1976d2;
+  outline-offset:2px;
+}
+
+/* Make ALL labels inside modals black */
+.modal-content label{
+  color:#000 !important;
+}
