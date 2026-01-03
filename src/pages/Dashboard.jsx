@@ -1,23 +1,27 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, X, Edit } from "lucide-react";
-import { 
-  getInstallationRequisitions, 
+import {
+  getInstallationRequisitions,
   updateInstallationRequisition,
 } from "../api/installationRequisitionApi";
 import "./Dashboard.css";
 import { getAggregators } from "../api/aggregatorApi";
+
+/** ---------------------------
+ *  Date helpers
+ *  --------------------------*/
 
 const formatDate = (isoDateString) => {
   if (!isoDateString) return "N/A";
   try {
     const date = new Date(isoDateString);
     if (isNaN(date.getTime())) return "N/A";
-    
-    return date.toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+
+    return date.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   } catch (error) {
     return "N/A";
@@ -29,34 +33,85 @@ const formatDateTime = (isoDateString) => {
   try {
     const date = new Date(isoDateString);
     if (isNaN(date.getTime())) return "N/A";
-    
-    return date.toLocaleString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+
+    return date.toLocaleString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch (error) {
     return "N/A";
   }
 };
 
+// For <input type="date" />
 const formatDateForInput = (isoDateString) => {
   if (!isoDateString) return "";
   try {
     const date = new Date(isoDateString);
     if (isNaN(date.getTime())) return "";
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   } catch (error) {
     return "";
   }
 };
 
+// Display date + time (local) in View modal Timeline.
+const formatDateTimeLocalDisplay = (isoDateString) => {
+  if (!isoDateString) return "N/A";
+  try {
+    const date = new Date(isoDateString);
+    if (isNaN(date.getTime())) return "N/A";
+    return date.toLocaleString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return "N/A";
+  }
+};
+
+const addHours = (isoDateString, hours) => {
+  if (!isoDateString) return null;
+  const d = new Date(isoDateString);
+  if (isNaN(d.getTime())) return null;
+  return new Date(d.getTime() + hours * 60 * 60 * 1000).toISOString();
+};
+
+const getEffectivePreferredDateTime = (requestedAt, preferredInstallationDate) => {
+  // If requestedAt missing/invalid, fall back to preferred date-time as-is.
+  const req = requestedAt ? new Date(requestedAt) : null;
+  const pref = preferredInstallationDate ? new Date(preferredInstallationDate) : null;
+
+  const reqValid = req && !isNaN(req.getTime());
+  const prefValid = pref && !isNaN(pref.getTime());
+
+  if (!reqValid && !prefValid) return null;
+  if (!reqValid && prefValid) return pref.toISOString();
+
+  // Base = requestedAt + 48h.
+  const minPreferred = new Date(req.getTime() + 48 * 60 * 60 * 1000);
+
+  // If preferred is already >= requestedAt+48h, show it; else show requestedAt+48h.
+  if (prefValid && pref.getTime() >= minPreferred.getTime()) {
+    return pref.toISOString();
+  }
+  return minPreferred.toISOString();
+};
+
+/** ---------------------------
+ *  Badge helpers
+ *  --------------------------*/
+
 const getStatusBadgeStyle = (status) => {
   const styles = {
     NEW: { backgroundColor: "#e3f2fd", color: "#1976d2" },
-    PENDING:  { backgroundColor: "#e3f2fd", color: "#1976d2" },
+    PENDING: { backgroundColor: "#e3f2fd", color: "#1976d2" },
     ASSIGNED: { backgroundColor: "#000000", color: "#f57c00" },
     ACCEPTED: { backgroundColor: "#e0f2f1", color: "#00796b" },
     IN_PROGRESS: { backgroundColor: "#fce4ec", color: "#c2185b" },
@@ -78,7 +133,7 @@ const getPriorityBadge = (priority) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  
+
   const [requisitions, setRequisitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -96,10 +151,7 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
 
-    const params = {
-      limit: 1000,
-    };
-
+    const params = { limit: 1000 };
     const result = await getInstallationRequisitions(params);
 
     if (result.success) {
@@ -108,7 +160,6 @@ export default function Dashboard() {
       setError(result.error);
       setRequisitions([]);
     }
-
     setLoading(false);
   };
 
@@ -120,15 +171,16 @@ export default function Dashboard() {
     }
 
     if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (r) =>
-          r.requisitionNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.vehicleNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.customerMobile?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.branchId?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.branch?.branchCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          r.branch?.branchName?.toLowerCase().includes(searchTerm.toLowerCase())
+          r.requisitionNo?.toLowerCase().includes(q) ||
+          r.vehicleNo?.toLowerCase().includes(q) ||
+          r.customerName?.toLowerCase().includes(q) ||
+          r.customerMobile?.toLowerCase().includes(q) ||
+          r.branchId?.toString().toLowerCase().includes(q) ||
+          r.branch?.branchCode?.toLowerCase().includes(q) ||
+          r.branch?.branchName?.toLowerCase().includes(q)
       );
     }
 
@@ -233,10 +285,9 @@ export default function Dashboard() {
               <th>Requisition No</th>
               <th>Branch Code</th>
               <th>Branch Name</th>
-              {/* <th>Branch ID</th> */}
               <th>Vehicle No</th>
               <th>Customer Name</th>
-                            <th>Pincode</th>
+              <th>Pincode</th>
               <th>District</th>
               <th>State</th>
               <th>Priority</th>
@@ -267,12 +318,9 @@ export default function Dashboard() {
             ) : (
               filteredRequisitions.map((req) => (
                 <tr key={req.id}>
-                  <td>
-                    <strong>{req.requisitionNo}</strong>
-                  </td>
+                  <td><strong>{req.requisitionNo}</strong></td>
                   <td>{req.branch?.branchCode || "N/A"}</td>
                   <td>{req.branch?.branchName || "N/A"}</td>
-                  {/* <td>{req.branchId || "N/A"}</td> */}
                   <td>{req.vehicleNo}</td>
                   <td>{req.customerName}</td>
                   <td>{req.pincode || "N/A"}</td>
@@ -319,15 +367,10 @@ export default function Dashboard() {
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <button
-                        className="icon-btn"
-                        onClick={() => handleViewDetails(req)}
-                        title="View Details"
-                      >
+                      <button className="icon-btn" onClick={() => handleViewDetails(req)} title="View Details">
                         <Eye size={16} />
                       </button>
-                      
-                      {/* Only show Edit button if status is NOT ASSIGNED, ACCEPTED, COMPLETED, or CANCELLED */}
+
                       {!["ASSIGNED", "ACCEPTED", "COMPLETED", "CANCELLED"].includes(req.status) && (
                         <button
                           className="icon-btn"
@@ -354,8 +397,8 @@ export default function Dashboard() {
 
       {/* EDIT MODAL */}
       {showEditModal && selectedRequisition && (
-        <EditRequisitionModal 
-          requisition={selectedRequisition} 
+        <EditRequisitionModal
+          requisition={selectedRequisition}
           onClose={handleCloseEditModal}
           onSuccess={handleUpdateSuccess}
         />
@@ -366,10 +409,10 @@ export default function Dashboard() {
 
 function SummaryCard({ title, value, color, onClick, active }) {
   return (
-    <div 
-      className={`summary-card ${color} ${active ? 'active' : ''}`}
+    <div
+      className={`summary-card ${color} ${active ? "active" : ""}`}
       onClick={onClick}
-      style={{ cursor: 'pointer', border: active ? '2px solid #1976d2' : 'none' }}
+      style={{ cursor: "pointer", border: active ? "2px solid #1976d2" : "none" }}
     >
       <h4>{title}</h4>
       <p>{value} Requisitions</p>
@@ -398,26 +441,16 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
   const fetchAggregators = async () => {
     setLoadingAggregators(true);
     const result = await getAggregators({ limit: 1000 });
-    if (result.success) {
-      setAggregators(result.data);
-    }
+    if (result.success) setAggregators(result.data);
     setLoadingAggregators(false);
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.quantity || formData.quantity <= 0) {
-      newErrors.quantity = "Quantity must be greater than 0";
-    }
-    if (!formData.preferredInstallationDate) {
-      newErrors.preferredInstallationDate = "Preferred installation date is required";
-    }
-    if (!formData.assignedAggregatorId) {
-      newErrors.assignedAggregatorId = "Aggregator is required";
-    }
-    if (!formData.installationFinishTimeAssigned) {
-      newErrors.installationFinishTimeAssigned = "Installation finish time is required";
-    }
+    if (!formData.quantity || formData.quantity <= 0) newErrors.quantity = "Quantity must be greater than 0";
+    if (!formData.preferredInstallationDate) newErrors.preferredInstallationDate = "Preferred installation date is required";
+    if (!formData.assignedAggregatorId) newErrors.assignedAggregatorId = "Aggregator is required";
+    if (!formData.installationFinishTimeAssigned) newErrors.installationFinishTimeAssigned = "Installation finish time is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -427,9 +460,9 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
+        const next = { ...prev };
+        delete next[name];
+        return next;
       });
     }
   };
@@ -482,7 +515,6 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              {/* Quantity */}
               <div>
                 <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
                   Quantity *
@@ -509,7 +541,6 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
                 )}
               </div>
 
-              {/* Preferred Installation Date */}
               <div>
                 <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
                   Preferred Installation Date *
@@ -535,7 +566,6 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
                 )}
               </div>
 
-              {/* Assigned Aggregator */}
               <div>
                 <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
                   Assigned Aggregator *
@@ -569,7 +599,6 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
                 )}
               </div>
 
-              {/* Installation Finish Time */}
               <div>
                 <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
                   Installation Finish Time *
@@ -595,7 +624,6 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
                 )}
               </div>
 
-              {/* Status Info */}
               <div style={{ padding: "1rem", backgroundColor: "#fff3e0", borderRadius: "4px" }}>
                 <p style={{ margin: 0, fontSize: "0.9rem", color: "#f57c00" }}>
                   <strong>Note:</strong> Status will be automatically set to <strong>ASSIGNED</strong> upon submission.
@@ -608,9 +636,9 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
             <button type="button" className="secondary" onClick={onClose} disabled={submitting}>
               Cancel
             </button>
-            <button 
-              type="submit" 
-              className="primary" 
+            <button
+              type="submit"
+              className="primary"
               disabled={submitting || loadingAggregators}
               style={{
                 backgroundColor: "#f57c00",
@@ -632,6 +660,12 @@ function EditRequisitionModal({ requisition, onClose, onSuccess }) {
 }
 
 function RequisitionModal({ requisition, onClose }) {
+  // Effective preferred date-time: ensure preferred >= requestedAt + 48h.
+  const effectivePreferred = getEffectivePreferredDateTime(
+    requisition.requestedAt,
+    requisition.preferredInstallationDate
+  );
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -642,9 +676,16 @@ function RequisitionModal({ requisition, onClose }) {
               ID: {requisition.id} | Branch: {requisition.branch?.branchName || "N/A"} ({requisition.branch?.branchCode || "N/A"})
             </p>
           </div>
-          <button className="modal-close" onClick={onClose}>
-            <X size={24} />
-          </button>
+<button
+  type="button"
+  className="modal-close-btn"
+  onClick={onClose}
+  aria-label="Close dialog"
+  title="Close"
+>
+  <X size={20} />
+</button>
+
         </div>
 
         <div className="modal-body">
@@ -735,10 +776,12 @@ function RequisitionModal({ requisition, onClose }) {
                 <label>Requested At</label>
                 <p>{formatDateTime(requisition.requestedAt)}</p>
               </div>
+
               <div>
                 <label>Preferred Date</label>
-                <p>{formatDate(requisition.preferredInstallationDate)}</p>
+                <p>{effectivePreferred ? formatDateTimeLocalDisplay(effectivePreferred) : "N/A"}</p>
               </div>
+
               <div>
                 <label>Completed At</label>
                 <p>{requisition.completedAt ? formatDateTime(requisition.completedAt) : "Not Completed"}</p>

@@ -339,3 +339,12 @@ th {
   box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
   transform: translateY(-2px);
 }
+
+
+.modal-close-btn{
+  color:#000 !important;              /* Lucide uses currentColor */ /* [web:41] */
+}
+
+.modal-close-btn svg{
+  stroke: currentColor !important;    /* keep icon in sync */ /* [web:41] */
+}
