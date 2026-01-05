@@ -1,43 +1,70 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { MapPin, X } from "lucide-react";
+import { getInstallationRequisitions } from "../api/installationRequisitionApi";
 import "./TrackerPage.css";
 
-// Dummy vehicle data with West Bengal locations
-const generateDummyVehicles = () => {
-  const locations = [
-    { lat: 22.5726, lng: 88.3639, city: "Kolkata" },
-    { lat: 22.5698, lng: 88.4331, city: "Salt Lake, Kolkata" },
-    { lat: 22.5343, lng: 88.3301, city: "Alipore" },
-    { lat: 22.7210, lng: 88.4853, city: "Barasat" },
-    { lat: 26.7271, lng: 88.3953, city: "Siliguri" },
-    { lat: 23.2419, lng: 87.8615, city: "Burdwan" },
-    { lat: 22.5820, lng: 88.3426, city: "Howrah" },
-    { lat: 23.4058, lng: 88.4969, city: "Krishnanagar" },
-    { lat: 25.0097, lng: 88.1433, city: "Malda" },
-    { lat: 23.6839, lng: 86.9524, city: "Asansol" },
-  ];
-
-  const wbRTOCodes = [
-    "WB-01", "WB-20", "WB-26", "WB-74", "WB-42", 
-    "WB-12", "WB-52", "WB-66", "WB-38", "WB-34"
-  ];
-
-  return Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    vehicleNo: `${wbRTOCodes[i % wbRTOCodes.length]}-${String.fromCharCode(65 + (i % 26))}${String.fromCharCode(65 + ((i + 1) % 26))}-${1000 + i}`,
-    status: i % 3 === 0 ? "Moving" : i % 2 === 0 ? "Stopped" : "Idle",
-    location: locations[i % locations.length],
-    lastUpdate: new Date(Date.now() - Math.random() * 3600000).toLocaleString('en-IN'),
-  }));
-};
+// Dummy West Bengal locations for fallback
+const DUMMY_WB_LOCATIONS = [
+  { name: "Park Street, Kolkata", lat: 22.5532, lng: 88.3515 },
+  { name: "Salt Lake, Kolkata", lat: 22.5698, lng: 88.4331 },
+  { name: "Alipore, South 24 Parganas", lat: 22.5343, lng: 88.3301 },
+  { name: "Barasat, North 24 Parganas", lat: 22.7210, lng: 88.4853 },
+  { name: "Siliguri, Darjeeling", lat: 26.7271, lng: 88.3953 },
+  { name: "Burdwan City Center", lat: 23.2419, lng: 87.8615 },
+  { name: "Howrah Station Area", lat: 22.5820, lng: 88.3426 },
+  { name: "Krishnanagar, Nadia", lat: 23.4058, lng: 88.4969 },
+  { name: "Malda Town", lat: 25.0097, lng: 88.1433 },
+  { name: "Asansol, Paschim Bardhaman", lat: 23.6839, lng: 86.9524 },
+];
 
 export default function TrackerPage() {
-  const navigate = useNavigate();
-  const [vehicles] = useState(generateDummyVehicles());
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  // Fetch vehicles on mount
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  const fetchVehicles = async () => {
+    setLoading(true);
+    try {
+      const response = await getInstallationRequisitions({
+        installationStatus: "COMPLETED",
+      });
+
+      if (response.success && response.data) {
+        // Transform API data to vehicle format
+        const transformedVehicles = response.data
+          .filter((req) => req.vehicleNo) // Only records with vehicle numbers
+          .map((req, index) => {
+            const dummyLoc = DUMMY_WB_LOCATIONS[index % DUMMY_WB_LOCATIONS.length];
+            const hasValidCoords = req.latitude && req.longitude && req.latitude !== 0 && req.longitude !== 0;
+            
+            return {
+              id: req.id,
+              vehicleNo: req.vehicleNo,
+              status: "STOPPED", // All completed installations are stopped
+              location: {
+                city: req.installationAddress || dummyLoc.name,
+                lat: hasValidCoords ? req.latitude : dummyLoc.lat,
+                lng: hasValidCoords ? req.longitude : dummyLoc.lng,
+              },
+              lastUpdate: new Date(req.completedAt || req.updatedAt || req.createdAt).toLocaleString('en-IN'),
+            };
+          });
+
+        setVehicles(transformedVehicles);
+      }
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredVehicles = vehicles.filter((v) =>
     v.vehicleNo.toLowerCase().includes(searchTerm.toLowerCase())
@@ -53,19 +80,6 @@ export default function TrackerPage() {
     setSelectedVehicle(null);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Moving":
-        return "#2e7d32"; // Green
-      case "Stopped":
-        return "#c62828"; // Red
-      case "Idle":
-        return "#f57c00"; // Orange
-      default:
-        return "#666";
-    }
-  };
-
   const getStatusBadge = (status) => {
     const colors = {
       Moving: { bg: "#e8f5e9", color: "#2e7d32" },
@@ -76,13 +90,23 @@ export default function TrackerPage() {
     return style;
   };
 
+  if (loading) {
+    return (
+      <div className="tracker-page">
+        <div className="card" style={{ padding: "2rem", textAlign: "center" }}>
+          Loading vehicles...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="tracker-page">
       {/* PAGE HEADER */}
       <div className="card page-header">
         <h2>Vehicle List - West Bengal</h2>
         <p style={{ margin: "0.5rem 0 0 0", color: "#666", fontSize: "0.9rem" }}>
-          All vehicles list
+          All vehicles with completed installations
         </p>
       </div>
 
@@ -102,6 +126,22 @@ export default function TrackerPage() {
             fontSize: "0.95rem",
           }}
         />
+        <button
+          onClick={fetchVehicles}
+          style={{
+            padding: "0.75rem 1.5rem",
+            backgroundColor: "#2e7d32",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "0.95rem",
+            fontWeight: "500",
+            marginLeft: "0.5rem",
+          }}
+        >
+          Refresh
+        </button>
       </div>
 
       {/* TABLE */}
@@ -152,7 +192,20 @@ export default function TrackerPage() {
                           {vehicle.status}
                         </span>
                       </td>
-                      <td>{vehicle.location.city}</td>
+                      <td>
+                        <span
+                          style={{
+                            maxWidth: "300px",
+                            display: "inline-block",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                          title={vehicle.location.city}
+                        >
+                          {vehicle.location.city}
+                        </span>
+                      </td>
                       <td style={{ fontSize: "0.85rem", color: "#666" }}>
                         {vehicle.lastUpdate}
                       </td>
@@ -201,9 +254,6 @@ export default function TrackerPage() {
 
 // Map Modal Component
 function MapModal({ vehicle, onClose }) {
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${vehicle.location.lat},${vehicle.location.lng}&zoom=15`;
-  
-  // Fallback: Use Google Maps static URL without API key (limited features)
   const fallbackMapUrl = `https://maps.google.com/maps?q=${vehicle.location.lat},${vehicle.location.lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
   return (

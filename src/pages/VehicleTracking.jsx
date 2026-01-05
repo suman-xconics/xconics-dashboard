@@ -1,78 +1,159 @@
-import { useState } from "react";
-import { MapPin, Navigation, Clock, Signal, X, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, Clock, Signal, X, ExternalLink } from "lucide-react";
+import { getInstallationRequisitions } from "../api/installationRequisitionApi";
 import "./VehicleTracking.css";
 
-// Generate realistic tracking logs
-const generateTrackingLogs = () => {
-  const vehicles = [
-    "WB-01-AB-1234", // Kolkata
-    "WB-20-CD-5678", // Alipore
-    "WB-26-EF-9012", // Barasat
-    "WB-74-GH-3456", // Siliguri
-    "WB-42-IJ-7890", // Burdwan
-    "WB-12-KL-2345", // Howrah
-    "WB-52-MN-6789", // Nadia
-    "WB-66-OP-0123", // Malda
-    "WB-38-QR-4567", // Asansol
-    "WB-34-ST-8901", // Midnapur
-  ];
-
-  const locations = [
-    { name: "Park Street, Kolkata", lat: 22.5532, lng: 88.3515 },
-    { name: "Salt Lake, Kolkata", lat: 22.5698, lng: 88.4331 },
-    { name: "Alipore, South 24 Parganas", lat: 22.5343, lng: 88.3301 },
-    { name: "Barasat, North 24 Parganas", lat: 22.7210, lng: 88.4853 },
-    { name: "Siliguri, Darjeeling", lat: 26.7271, lng: 88.3953 },
-    { name: "Burdwan City Center", lat: 23.2419, lng: 87.8615 },
-    { name: "Howrah Station Area", lat: 22.5820, lng: 88.3426 },
-    { name: "Krishnanagar, Nadia", lat: 23.4058, lng: 88.4969 },
-    { name: "Malda Town", lat: 25.0097, lng: 88.1433 },
-    { name: "Asansol, Paschim Bardhaman", lat: 23.6839, lng: 86.9524 },
-  ];
-
-  const statuses = ["Moving", "Stopped", "Idle", "Parked"];
-  const speeds = [0, 15, 25, 35, 45, 55, 60, 0, 0, 20];
-
-  const logs = [];
-  const now = Date.now();
-
-  for (let i = 0; i < 50; i++) {
-    const vehicleIndex = i % vehicles.length;
-    const locationIndex = i % locations.length;
-    const status = speeds[i % speeds.length] === 0 ? "Stopped" : speeds[i % speeds.length] < 10 ? "Idle" : "Moving";
-    
-    logs.push({
-      id: i + 1,
-      vehicleNo: vehicles[vehicleIndex],
-      location: locations[locationIndex].name,
-      latitude: (locations[locationIndex].lat + (Math.random() - 0.5) * 0.01).toFixed(6),
-      longitude: (locations[locationIndex].lng + (Math.random() - 0.5) * 0.01).toFixed(6),
-      speed: speeds[i % speeds.length],
-      status: status,
-      signalStrength: Math.floor(Math.random() * 5) + 1,
-      ignition: speeds[i % speeds.length] > 0 ? "ON" : "OFF",
-      batteryVoltage: (12 + Math.random() * 2).toFixed(1),
-      timestamp: new Date(now - i * 5 * 60 * 1000),
-    });
-  }
-
-  return logs.sort((a, b) => b.timestamp - a.timestamp);
-};
+// Dummy West Bengal locations for testing
+const DUMMY_WB_LOCATIONS = [
+  { name: "Park Street, Kolkata", lat: 22.5532, lng: 88.3515 },
+  { name: "Salt Lake, Kolkata", lat: 22.5698, lng: 88.4331 },
+  { name: "Alipore, South 24 Parganas", lat: 22.5343, lng: 88.3301 },
+  { name: "Barasat, North 24 Parganas", lat: 22.7210, lng: 88.4853 },
+  { name: "Siliguri, Darjeeling", lat: 26.7271, lng: 88.3953 },
+  { name: "Burdwan City Center", lat: 23.2419, lng: 87.8615 },
+  { name: "Howrah Station Area", lat: 22.5820, lng: 88.3426 },
+  { name: "Krishnanagar, Nadia", lat: 23.4058, lng: 88.4969 },
+  { name: "Malda Town", lat: 25.0097, lng: 88.1433 },
+  { name: "Asansol, Paschim Bardhaman", lat: 23.6839, lng: 86.9524 },
+  { name: "Durgapur Steel City", lat: 23.5204, lng: 87.3119 },
+  { name: "Rajarhat, Kolkata", lat: 22.6211, lng: 88.4372 },
+  { name: "Kalyani, Nadia", lat: 22.9750, lng: 88.4344 },
+  { name: "Serampore, Hooghly", lat: 22.7523, lng: 88.3408 },
+  { name: "Kharagpur, Paschim Medinipur", lat: 22.3460, lng: 87.2320 },
+  { name: "Bankura Town", lat: 23.2324, lng: 87.0694 },
+  { name: "Jalpaiguri, Jalpaiguri", lat: 26.5167, lng: 88.7333 },
+  { name: "Cooch Behar", lat: 26.3240, lng: 89.4450 },
+  { name: "Midnapore Town", lat: 22.4240, lng: 87.3190 },
+  { name: "Balurghat, Dakshin Dinajpur", lat: 25.2231, lng: 88.7631 },
+];
 
 export default function VehicleTracking() {
-  const [trackingLogs] = useState(generateTrackingLogs());
+  const [trackingLogs, setTrackingLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(0);
   const [selectedLog, setSelectedLog] = useState(null);
   const [showMapModal, setShowMapModal] = useState(false);
   const rowsPerPage = 10;
 
+  // Fetch installation requisitions on mount
+  useEffect(() => {
+    fetchTrackingData();
+  }, []);
+
+  const fetchTrackingData = async () => {
+    setLoading(true);
+    try {
+      const response = await getInstallationRequisitions({
+        installationStatus: "COMPLETED",
+      });
+
+      if (response.success && response.data) {
+        // Transform API data to tracking logs format
+        const transformedLogs = response.data
+          .filter((req) => req.vehicleNo) // Only records with vehicle numbers
+          .map((req, index) => {
+            // Use dummy West Bengal location if API doesn't provide coordinates
+            const dummyLoc = DUMMY_WB_LOCATIONS[index % DUMMY_WB_LOCATIONS.length];
+            const hasValidCoords = req.latitude && req.longitude && req.latitude !== 0 && req.longitude !== 0;
+            
+            return {
+              id: req.id,
+              vehicleNo: req.vehicleNo,
+              location: req.installationAddress || dummyLoc.name,
+              latitude: hasValidCoords ? req.latitude : dummyLoc.lat,
+              longitude: hasValidCoords ? req.longitude : dummyLoc.lng,
+              status: "STOPPED", // All records show STOPPED
+              signalStrength: req.gsmSignalStrength || Math.floor(Math.random() * 5) + 1,
+              ignition: "OFF", // All records show OFF
+              timestamp: new Date(req.completedAt || req.updatedAt || req.createdAt),
+              // Additional data for reference
+              customerName: req.customerName,
+              customerMobile: req.customerMobile,
+              deviceType: req.deviceType,
+              requisitionNo: req.requisitionNo,
+              branchName: req.branch?.branchName,
+              engineerName: req.installationRequisitionRequests?.[0]?.assignedEngineer?.engineerName,
+            };
+          });
+
+        setTrackingLogs(transformedLogs);
+        setMaxPage(response.maxPage || Math.ceil(transformedLogs.length / rowsPerPage));
+      }
+    } catch (error) {
+      console.error("Error fetching tracking data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Export to CSV function
+  const handleExportCSV = () => {
+    if (trackingLogs.length === 0) {
+      alert("No data to export");
+      return;
+    }
+
+    // Define CSV headers
+    const headers = [
+      "S.No",
+      "Vehicle Number",
+      "Location",
+      "Latitude",
+      "Longitude",
+      "Status",
+      "Ignition",
+      "Signal Strength",
+      "Customer Name",
+      "Customer Mobile",
+      "Device Type",
+      "Branch Name",
+      "Engineer Name",
+      "Last Updated",
+    ];
+
+    // Convert data to CSV rows
+    const csvRows = trackingLogs.map((log, index) => [
+      index + 1,
+      log.vehicleNo,
+      `"${log.location}"`, // Wrap in quotes to handle commas in location
+      log.latitude,
+      log.longitude,
+      log.status,
+      log.ignition,
+      `${log.signalStrength}/5`,
+      log.customerName || "N/A",
+      log.customerMobile || "N/A",
+      log.deviceType || "GPS",
+      log.branchName || "N/A",
+      log.engineerName || "N/A",
+      log.timestamp.toLocaleString("en-IN"),
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(","),
+      ...csvRows.map((row) => row.join(",")),
+    ].join("\n");
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `vehicle_tracking_${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Filter logs
   const filteredLogs = trackingLogs.filter((log) => {
-    const matchesSearch = log.vehicleNo.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "" || log.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    return log.vehicleNo.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   // Pagination
@@ -93,17 +174,6 @@ export default function VehicleTracking() {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  // Status badge styling
-  const getStatusBadge = (status) => {
-    const styles = {
-      Moving: { bg: "#e8f5e9", color: "#2e7d32" },
-      Stopped: { bg: "#ffebee", color: "#c62828" },
-      Idle: { bg: "#fff3e0", color: "#f57c00" },
-      Parked: { bg: "#e3f2fd", color: "#1976d2" },
-    };
-    return styles[status] || { bg: "#f5f5f5", color: "#666" };
   };
 
   // Signal strength bars
@@ -135,6 +205,16 @@ export default function VehicleTracking() {
     setSelectedLog(null);
   };
 
+  if (loading) {
+    return (
+      <div className="vehicle-tracking-page">
+        <div className="card" style={{ padding: "2rem", textAlign: "center" }}>
+          Loading tracking data...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="vehicle-tracking-page">
       {/* PAGE HEADER */}
@@ -142,25 +222,25 @@ export default function VehicleTracking() {
         <div>
           <h2>Vehicle Tracking Logs - West Bengal</h2>
           <p style={{ margin: "0.5rem 0 0 0", color: "#666", fontSize: "0.9rem" }}>
-            Real-time GPS tracking history and vehicle telemetry
+            GPS tracking for completed device installations
           </p>
         </div>
         <div className="stats-row">
           <div className="stat-card">
             <div className="stat-value">{trackingLogs.length}</div>
-            <div className="stat-label">Total Logs</div>
+            <div className="stat-label">Total Vehicles</div>
           </div>
           <div className="stat-card">
             <div className="stat-value">
-              {trackingLogs.filter((l) => l.status === "Moving").length}
+              {trackingLogs.filter((l) => l.status === "STOPPED").length}
             </div>
-            <div className="stat-label">Moving</div>
+            <div className="stat-label">Stopped</div>
           </div>
           <div className="stat-card">
             <div className="stat-value">
-              {new Set(trackingLogs.map((l) => l.vehicleNo)).size}
+              {trackingLogs.filter((l) => l.ignition === "OFF").length}
             </div>
-            <div className="stat-label">Vehicles</div>
+            <div className="stat-label">Ignition Off</div>
           </div>
         </div>
       </div>
@@ -183,27 +263,23 @@ export default function VehicleTracking() {
             fontSize: "0.95rem",
           }}
         />
-        <select
-          value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value);
-            setCurrentPage(1);
-          }}
+        <button
+          onClick={fetchTrackingData}
           style={{
-            padding: "0.75rem",
-            border: "1px solid #ccc",
+            padding: "0.75rem 1.5rem",
+            backgroundColor: "#2e7d32",
+            color: "white",
+            border: "none",
             borderRadius: "4px",
+            cursor: "pointer",
             fontSize: "0.95rem",
-            minWidth: "150px",
+            fontWeight: "500",
           }}
         >
-          <option value="">All Status</option>
-          <option value="Moving">Moving</option>
-          <option value="Stopped">Stopped</option>
-          <option value="Idle">Idle</option>
-          <option value="Parked">Parked</option>
-        </select>
+          Refresh Data
+        </button>
         <button
+          onClick={handleExportCSV}
           style={{
             padding: "0.75rem 1.5rem",
             backgroundColor: "#1976d2",
@@ -228,12 +304,9 @@ export default function VehicleTracking() {
                 <th>#</th>
                 <th>Vehicle Number</th>
                 <th>Location</th>
-                <th>Coordinates</th>
-                <th>Speed</th>
                 <th>Status</th>
                 <th>Ignition</th>
                 <th>Signal</th>
-                <th>Battery</th>
                 <th>Last Updated</th>
                 <th>Action</th>
               </tr>
@@ -242,13 +315,12 @@ export default function VehicleTracking() {
             <tbody>
               {currentLogs.length === 0 ? (
                 <tr>
-                  <td colSpan="11" style={{ textAlign: "center", padding: "2rem" }}>
+                  <td colSpan="8" style={{ textAlign: "center", padding: "2rem" }}>
                     No tracking logs found
                   </td>
                 </tr>
               ) : (
                 currentLogs.map((log, index) => {
-                  const statusStyle = getStatusBadge(log.status);
                   return (
                     <tr key={log.id}>
                       <td>{startIndex + index + 1}</td>
@@ -268,7 +340,7 @@ export default function VehicleTracking() {
                           <MapPin size={14} color="#666" />
                           <span
                             style={{
-                              maxWidth: "200px",
+                              maxWidth: "250px",
                               whiteSpace: "nowrap",
                               overflow: "hidden",
                               textOverflow: "ellipsis",
@@ -282,31 +354,12 @@ export default function VehicleTracking() {
                       <td>
                         <span
                           style={{
-                            fontFamily: "monospace",
-                            fontSize: "0.85rem",
-                            color: "#666",
-                          }}
-                        >
-                          {log.latitude}, {log.longitude}
-                        </span>
-                      </td>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <Navigation size={14} color="#666" />
-                          <span style={{ fontWeight: "500" }}>
-                            {log.speed} km/h
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        <span
-                          style={{
                             padding: "0.25rem 0.75rem",
                             borderRadius: "12px",
                             fontSize: "0.85rem",
                             fontWeight: "500",
-                            backgroundColor: statusStyle.bg,
-                            color: statusStyle.color,
+                            backgroundColor: "#ffebee",
+                            color: "#c62828",
                             display: "inline-block",
                           }}
                         >
@@ -320,9 +373,8 @@ export default function VehicleTracking() {
                             borderRadius: "4px",
                             fontSize: "0.8rem",
                             fontWeight: "500",
-                            backgroundColor:
-                              log.ignition === "ON" ? "#e8f5e9" : "#ffebee",
-                            color: log.ignition === "ON" ? "#2e7d32" : "#c62828",
+                            backgroundColor: "#ffebee",
+                            color: "#c62828",
                           }}
                         >
                           {log.ignition}
@@ -330,11 +382,6 @@ export default function VehicleTracking() {
                       </td>
                       <td>
                         <SignalBars strength={log.signalStrength} />
-                      </td>
-                      <td>
-                        <span style={{ fontSize: "0.85rem", color: "#666" }}>
-                          {log.batteryVoltage}V
-                        </span>
                       </td>
                       <td>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -433,12 +480,6 @@ export default function VehicleTracking() {
 // Location Map Modal Component
 function LocationMapModal({ log, onClose }) {
   const fallbackMapUrl = `https://maps.google.com/maps?q=${log.latitude},${log.longitude}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-  const statusStyle = {
-    Moving: { bg: "#e8f5e9", color: "#2e7d32" },
-    Stopped: { bg: "#ffebee", color: "#c62828" },
-    Idle: { bg: "#fff3e0", color: "#f57c00" },
-    Parked: { bg: "#e3f2fd", color: "#1976d2" },
-  }[log.status] || { bg: "#f5f5f5", color: "#666" };
 
   return (
     <>
@@ -493,8 +534,8 @@ function LocationMapModal({ log, onClose }) {
                     borderRadius: "12px",
                     fontSize: "0.85rem",
                     fontWeight: "500",
-                    backgroundColor: statusStyle.bg,
-                    color: statusStyle.color,
+                    backgroundColor: "#ffebee",
+                    color: "#c62828",
                   }}
                 >
                   {log.status}
@@ -541,15 +582,6 @@ function LocationMapModal({ log, onClose }) {
           >
             <div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#666", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                Speed
-              </p>
-              <p style={{ margin: "0.25rem 0 0 0", fontWeight: "500", fontSize: "0.95rem" }}>
-                <Navigation size={14} style={{ display: "inline", marginRight: "0.25rem" }} />
-                {log.speed} km/h
-              </p>
-            </div>
-            <div>
-              <p style={{ margin: 0, fontSize: "0.8rem", color: "#666", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                 Ignition
               </p>
               <p style={{ margin: "0.25rem 0 0 0", fontWeight: "500", fontSize: "0.95rem" }}>
@@ -559,8 +591,8 @@ function LocationMapModal({ log, onClose }) {
                     borderRadius: "4px",
                     fontSize: "0.8rem",
                     fontWeight: "500",
-                    backgroundColor: log.ignition === "ON" ? "#e8f5e9" : "#ffebee",
-                    color: log.ignition === "ON" ? "#2e7d32" : "#c62828",
+                    backgroundColor: "#ffebee",
+                    color: "#c62828",
                   }}
                 >
                   {log.ignition}
@@ -569,10 +601,18 @@ function LocationMapModal({ log, onClose }) {
             </div>
             <div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#666", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                Battery
+                Customer
               </p>
               <p style={{ margin: "0.25rem 0 0 0", fontWeight: "500", fontSize: "0.95rem" }}>
-                {log.batteryVoltage}V
+                {log.customerName || "N/A"}
+              </p>
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "#666", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                Device Type
+              </p>
+              <p style={{ margin: "0.25rem 0 0 0", fontWeight: "500", fontSize: "0.95rem" }}>
+                {log.deviceType || "GPS"}
               </p>
             </div>
             <div>
@@ -580,7 +620,7 @@ function LocationMapModal({ log, onClose }) {
                 Coordinates
               </p>
               <p style={{ margin: "0.25rem 0 0 0", fontWeight: "500", fontFamily: "monospace", fontSize: "0.85rem" }}>
-                {log.latitude}, {log.longitude}
+                {log.latitude.toFixed(4)}, {log.longitude.toFixed(4)}
               </p>
             </div>
             <div>
