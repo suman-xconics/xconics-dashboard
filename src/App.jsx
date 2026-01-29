@@ -56,6 +56,7 @@ import VehicleTracking from "./pages/VehicleTracking";
 
 import "./App.css";
 import Footer from "./components/Footer";
+import SupportTickets from "./pages/SupportTickets";
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -153,6 +154,9 @@ export default function App() {
 
           {/* VEHICLE TRACKING */}
           <Route path="/vehicle-tracking" element={<VehicleTracking />} />
+
+          {/* Support Tickets */}
+          <Route path="/support-tickets" element={<SupportTickets />} />
 
 
         </Routes>
