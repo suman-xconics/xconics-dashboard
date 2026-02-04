@@ -21,8 +21,8 @@ import xconicsText from "../assets/Xconics_logo_blue (3).png";
 
 export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
   const user = {
-    name: "Lisa Roy",
-    role: "Designer",
+    name: "Anonymous",
+    role: "Administrator",
   };
 
   const handleNavClick = () => {
