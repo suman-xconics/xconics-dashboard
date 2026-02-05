@@ -1,9 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import LenderPageHeader from "../components/LenderPageHeader";
 import { getFieldEngineerById, updateFieldEngineer, EMPLOYMENT_TYPES, STATUSES, ID_PROOF_TYPES, SKILL_TYPES } from "../api/fieldEngineerApi";
+import { 
+  getFieldEngineerPincodeMappingsByEngineerId,
+  createFieldEngineerPincodeMapping,
+  updateFieldEngineerPincodeMapping,
+  deleteFieldEngineerPincodeMapping 
+} from "../api/fieldEngineerPinocdeMapping";
 import { getAggregators } from "../api/aggregatorApi";
 import "./FieldEngineerForm.css";
+
 
 /* =====================
    EMPTY MODEL
@@ -32,6 +40,14 @@ const EMPTY_ENGINEER = {
   remarks: "",
 };
 
+const EMPTY_PINCODE_MAPPING = {
+  mappingPincode: "",
+  state: "",
+  district: "",
+  isActive: true,
+};
+
+
 /**
  * Convert ISO date string to YYYY-MM-DD format for date input
  */
@@ -40,17 +56,18 @@ const formatDateForInput = (isoDateString) => {
   try {
     const date = new Date(isoDateString);
     if (isNaN(date.getTime())) return "";
-    
+
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}`;
   } catch (error) {
     console.error("Error formatting date:", isoDateString, error);
     return "";
   }
 };
+
 
 export default function EditFieldEngineer() {
   const navigate = useNavigate();
@@ -63,6 +80,18 @@ export default function EditFieldEngineer() {
   const [loadingAggregators, setLoadingAggregators] = useState(true);
   const [error, setError] = useState(null);
 
+  // Pincode mapping states
+  const [pincodeMappings, setPincodeMappings] = useState([]);
+  const [loadingMappings, setLoadingMappings] = useState(false);
+  const [newMapping, setNewMapping] = useState(EMPTY_PINCODE_MAPPING);
+  const [savingMapping, setSavingMapping] = useState(false);
+  
+  // Edit mode states
+  const [editingMappingId, setEditingMappingId] = useState(null);
+  const [editMapping, setEditMapping] = useState(null);
+  const [updatingMapping, setUpdatingMapping] = useState(false);
+
+
   /* =====================
      FETCH AGGREGATORS
      ===================== */
@@ -70,18 +99,19 @@ export default function EditFieldEngineer() {
     const fetchAggregators = async () => {
       setLoadingAggregators(true);
       const result = await getAggregators({ limit: 1000 });
-      
+
       if (result.success) {
         setAggregators(result.data);
       } else {
         console.error("Failed to fetch aggregators:", result.error);
       }
-      
+
       setLoadingAggregators(false);
     };
 
     fetchAggregators();
   }, []);
+
 
   /* =====================
      FETCH FIELD ENGINEER DATA
@@ -149,12 +179,43 @@ export default function EditFieldEngineer() {
     }
   }, [id]);
 
+
+  /* =====================
+     FETCH PINCODE MAPPINGS
+     ===================== */
+  const fetchPincodeMappings = async () => {
+    if (!id) return;
+
+    setLoadingMappings(true);
+    try {
+      // Use the new engineer-specific endpoint
+      const result = await getFieldEngineerPincodeMappingsByEngineerId(id);
+
+      if (result.success) {
+        setPincodeMappings(result.data);
+      } else {
+        console.error("Failed to fetch pincode mappings:", result.error);
+        setPincodeMappings([]);
+      }
+    } catch (err) {
+      console.error("Error fetching pincode mappings:", err);
+      setPincodeMappings([]);
+    } finally {
+      setLoadingMappings(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPincodeMappings();
+  }, [id]);
+
+
   /* =====================
      HANDLE CHANGE
      ===================== */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     console.log(`Field changed: ${name} = ${type === "checkbox" ? checked : value}`);
 
     setEngineer((prev) => ({
@@ -162,6 +223,7 @@ export default function EditFieldEngineer() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
 
   /* =====================
      HANDLE SKILL SET CHANGE
@@ -174,6 +236,173 @@ export default function EditFieldEngineer() {
       return { ...prev, skillSet };
     });
   };
+
+
+  /* =====================
+     HANDLE PINCODE MAPPING CHANGE (New Mapping)
+     ===================== */
+  const handleMappingChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setNewMapping((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+
+  /* =====================
+     HANDLE EDIT MAPPING CHANGE
+     ===================== */
+  const handleEditMappingChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditMapping((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+
+  /* =====================
+     START EDITING MAPPING
+     ===================== */
+  const handleEditClick = (mapping) => {
+    setEditingMappingId(mapping.id);
+    setEditMapping({
+      mappingPincode: mapping.mappingPincode,
+      state: mapping.state,
+      district: mapping.district,
+      isActive: mapping.isActive,
+    });
+  };
+
+
+  /* =====================
+     CANCEL EDITING
+     ===================== */
+  const handleCancelEdit = () => {
+    setEditingMappingId(null);
+    setEditMapping(null);
+  };
+
+
+  /* =====================
+     UPDATE PINCODE MAPPING
+     ===================== */
+  const handleUpdatePincodeMapping = async () => {
+    if (!editMapping) return;
+
+    // Validation
+    if (!editMapping.mappingPincode.trim()) {
+      alert("Please enter a pincode");
+      return;
+    }
+    if (!editMapping.state.trim()) {
+      alert("Please enter a state");
+      return;
+    }
+    if (!editMapping.district.trim()) {
+      alert("Please enter a district");
+      return;
+    }
+
+    setUpdatingMapping(true);
+    try {
+      const result = await updateFieldEngineerPincodeMapping(editingMappingId, {
+        fieldEngineerId: id,
+        ...editMapping,
+      });
+
+      if (result.success) {
+        alert("Pincode mapping updated successfully!");
+
+        // Refresh the mappings list
+        await fetchPincodeMappings();
+
+        // Reset edit state
+        setEditingMappingId(null);
+        setEditMapping(null);
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (err) {
+      console.error("Error updating pincode mapping:", err);
+      alert("An unexpected error occurred");
+    } finally {
+      setUpdatingMapping(false);
+    }
+  };
+
+
+  /* =====================
+     ADD PINCODE MAPPING
+     ===================== */
+  const handleAddPincodeMapping = async () => {
+    // Validation
+    if (!newMapping.mappingPincode.trim()) {
+      alert("Please enter a pincode");
+      return;
+    }
+    if (!newMapping.state.trim()) {
+      alert("Please enter a state");
+      return;
+    }
+    if (!newMapping.district.trim()) {
+      alert("Please enter a district");
+      return;
+    }
+
+    setSavingMapping(true);
+    try {
+      const result = await createFieldEngineerPincodeMapping({
+        fieldEngineerId: id,
+        ...newMapping,
+      });
+
+      if (result.success) {
+        alert("Pincode mapping added successfully!");
+
+        // Refresh the mappings list
+        await fetchPincodeMappings();
+
+        // Reset form
+        setNewMapping(EMPTY_PINCODE_MAPPING);
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (err) {
+      console.error("Error adding pincode mapping:", err);
+      alert("An unexpected error occurred");
+    } finally {
+      setSavingMapping(false);
+    }
+  };
+
+
+  /* =====================
+     DELETE PINCODE MAPPING
+     ===================== */
+  const handleDeletePincodeMapping = async (mappingId) => {
+    if (!confirm("Are you sure you want to delete this pincode mapping?")) {
+      return;
+    }
+
+    try {
+      const result = await deleteFieldEngineerPincodeMapping(mappingId);
+
+      if (result.success) {
+        alert("Pincode mapping deleted successfully!");
+
+        // Refresh the mappings list
+        await fetchPincodeMappings();
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (err) {
+      console.error("Error deleting pincode mapping:", err);
+      alert("An unexpected error occurred");
+    }
+  };
+
 
   /* =====================
      HANDLE SUBMIT
@@ -230,6 +459,7 @@ export default function EditFieldEngineer() {
     }
   };
 
+
   if (loading) {
     return (
       <div className="lender-form-page">
@@ -249,6 +479,7 @@ export default function EditFieldEngineer() {
       </div>
     );
   }
+
 
   return (
     <div className="lender-form-page">
@@ -446,7 +677,7 @@ export default function EditFieldEngineer() {
             {/* SKILLS & DEVICES */}
             <section>
               <h3>Skills & Devices</h3>
-              
+
               <label>Skill Set*</label>
               <div className="skill-checkboxes" style={{ display: "flex", gap: "1rem", marginBottom: "1rem", flexWrap: "wrap" }}>
                 {Object.values(SKILL_TYPES).map((skill) => (
@@ -555,7 +786,7 @@ export default function EditFieldEngineer() {
                     name="currentLatitude"
                     value={engineer.currentLatitude}
                     onChange={handleChange}
-                    placeholder="28.5355"
+                    placeholder="22.5726"
                     required
                     disabled={submitting}
                   />
@@ -569,7 +800,7 @@ export default function EditFieldEngineer() {
                     name="currentLongitude"
                     value={engineer.currentLongitude}
                     onChange={handleChange}
-                    placeholder="77.3910"
+                    placeholder="88.3639"
                     required
                     disabled={submitting}
                   />
@@ -624,6 +855,324 @@ export default function EditFieldEngineer() {
               </button>
             </div>
           </form>
+        </div>
+
+        {/* PINCODE MAPPING SECTION */}
+        <div className="card fe-card full-width" style={{ marginTop: "2rem" }}>
+          <h2 className="edit-lender-title">Pincode Mappings</h2>
+
+          {/* Add New Mapping Form */}
+          <div style={{ 
+            backgroundColor: "#f8f9fa", 
+            padding: "1.5rem", 
+            borderRadius: "8px", 
+            marginBottom: "1.5rem",
+            border: "1px solid #e0e0e0"
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: "1rem", fontSize: "1rem", color: "#333" }}>
+              Add New Pincode Mapping
+            </h3>
+
+            <div className="fe-grid" style={{ marginBottom: "1rem" }}>
+              <label>
+                Pincode*
+                <input
+                  name="mappingPincode"
+                  value={newMapping.mappingPincode}
+                  onChange={handleMappingChange}
+                  placeholder="700001"
+                  disabled={savingMapping}
+                  maxLength="6"
+                />
+              </label>
+
+              <label>
+                State*
+                <input
+                  name="state"
+                  value={newMapping.state}
+                  onChange={handleMappingChange}
+                  placeholder="West Bengal"
+                  disabled={savingMapping}
+                />
+              </label>
+
+              <label>
+                District*
+                <input
+                  name="district"
+                  value={newMapping.district}
+                  onChange={handleMappingChange}
+                  placeholder="Kolkata"
+                  disabled={savingMapping}
+                />
+              </label>
+
+              <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "1.8rem" }}>
+                <input
+                  type="checkbox"
+                  name="isActive"
+                  checked={newMapping.isActive}
+                  onChange={handleMappingChange}
+                  disabled={savingMapping}
+                />
+                Active
+              </label>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAddPincodeMapping}
+              disabled={savingMapping}
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                padding: "0.6rem 1.5rem",
+                borderRadius: "4px",
+                cursor: savingMapping ? "not-allowed" : "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                opacity: savingMapping ? 0.6 : 1,
+              }}
+            >
+              {savingMapping ? "Adding..." : "+ Add Pincode Mapping"}
+            </button>
+          </div>
+
+          {/* Existing Mappings Table */}
+          <div>
+            <h3 style={{ marginBottom: "1rem", fontSize: "1rem", color: "#333" }}>
+              Existing Mappings ({pincodeMappings.length})
+            </h3>
+
+            {loadingMappings ? (
+              <div style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
+                Loading mappings...
+              </div>
+            ) : pincodeMappings.length === 0 ? (
+              <div style={{ 
+                textAlign: "center", 
+                padding: "2rem", 
+                color: "#666",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "8px",
+                border: "1px dashed #ccc"
+              }}>
+                No pincode mappings found. Add one above to get started.
+              </div>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  backgroundColor: "white",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                  borderRadius: "8px",
+                  overflow: "hidden"
+                }}>
+                  <thead>
+                    <tr style={{ backgroundColor: "#f8f9fa", borderBottom: "2px solid #dee2e6" }}>
+                      <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", color: "#495057" }}>
+                        Pincode
+                      </th>
+                      <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", color: "#495057" }}>
+                        State
+                      </th>
+                      <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", color: "#495057" }}>
+                        District
+                      </th>
+                      <th style={{ padding: "1rem", textAlign: "center", fontWeight: "600", color: "#495057" }}>
+                        Status
+                      </th>
+                      <th style={{ padding: "1rem", textAlign: "center", fontWeight: "600", color: "#495057", width: "200px" }}>
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pincodeMappings.map((mapping) => (
+                      <tr 
+                        key={mapping.id}
+                        style={{ 
+                          borderBottom: "1px solid #dee2e6",
+                          backgroundColor: editingMappingId === mapping.id ? "#fff3cd" : "white"
+                        }}
+                      >
+                        {editingMappingId === mapping.id ? (
+                          // EDIT MODE
+                          <>
+                            <td style={{ padding: "1rem" }}>
+                              <input
+                                name="mappingPincode"
+                                value={editMapping.mappingPincode}
+                                onChange={handleEditMappingChange}
+                                placeholder="700001"
+                                disabled={updatingMapping}
+                                maxLength="6"
+                                style={{
+                                  width: "100%",
+                                  padding: "0.5rem",
+                                  border: "1px solid #ced4da",
+                                  borderRadius: "4px",
+                                  fontSize: "0.9rem"
+                                }}
+                              />
+                            </td>
+                            <td style={{ padding: "1rem" }}>
+                              <input
+                                name="state"
+                                value={editMapping.state}
+                                onChange={handleEditMappingChange}
+                                placeholder="West Bengal"
+                                disabled={updatingMapping}
+                                style={{
+                                  width: "100%",
+                                  padding: "0.5rem",
+                                  border: "1px solid #ced4da",
+                                  borderRadius: "4px",
+                                  fontSize: "0.9rem"
+                                }}
+                              />
+                            </td>
+                            <td style={{ padding: "1rem" }}>
+                              <input
+                                name="district"
+                                value={editMapping.district}
+                                onChange={handleEditMappingChange}
+                                placeholder="Kolkata"
+                                disabled={updatingMapping}
+                                style={{
+                                  width: "100%",
+                                  padding: "0.5rem",
+                                  border: "1px solid #ced4da",
+                                  borderRadius: "4px",
+                                  fontSize: "0.9rem"
+                                }}
+                              />
+                            </td>
+                            <td style={{ padding: "1rem", textAlign: "center" }}>
+                              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+                                <input
+                                  type="checkbox"
+                                  name="isActive"
+                                  checked={editMapping.isActive}
+                                  onChange={handleEditMappingChange}
+                                  disabled={updatingMapping}
+                                />
+                                Active
+                              </label>
+                            </td>
+                            <td style={{ padding: "1rem" }}>
+                              <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
+                                <button
+                                  onClick={handleUpdatePincodeMapping}
+                                  disabled={updatingMapping}
+                                  style={{
+                                    backgroundColor: "#28a745",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "4px",
+                                    cursor: updatingMapping ? "not-allowed" : "pointer",
+                                    fontSize: "0.85rem",
+                                    fontWeight: "500",
+                                    opacity: updatingMapping ? 0.6 : 1,
+                                  }}
+                                >
+                                  {updatingMapping ? "Updating..." : "Update"}
+                                </button>
+                                <button
+                                  onClick={handleCancelEdit}
+                                  disabled={updatingMapping}
+                                  style={{
+                                    backgroundColor: "#6c757d",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "4px",
+                                    cursor: updatingMapping ? "not-allowed" : "pointer",
+                                    fontSize: "0.85rem",
+                                    fontWeight: "500",
+                                    opacity: updatingMapping ? 0.6 : 1,
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </td>
+                          </>
+                        ) : (
+                          // VIEW MODE
+                          <>
+                            <td style={{ padding: "1rem", fontWeight: "600", color: "#212529" }}>
+                              {mapping.mappingPincode}
+                            </td>
+                            <td style={{ padding: "1rem", color: "#495057" }}>
+                              {mapping.state}
+                            </td>
+                            <td style={{ padding: "1rem", color: "#495057" }}>
+                              {mapping.district}
+                            </td>
+                            <td style={{ padding: "1rem", textAlign: "center" }}>
+                              <span style={{
+                                padding: "0.25rem 0.75rem",
+                                borderRadius: "12px",
+                                fontSize: "0.8rem",
+                                fontWeight: "500",
+                                backgroundColor: mapping.isActive ? "#d4edda" : "#f8d7da",
+                                color: mapping.isActive ? "#155724" : "#721c24",
+                              }}>
+                                {mapping.isActive ? "Active" : "Inactive"}
+                              </span>
+                            </td>
+                            <td style={{ padding: "1rem" }}>
+                              <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
+                                <button
+                                  onClick={() => handleEditClick(mapping)}
+                                  disabled={editingMappingId !== null}
+                                  style={{
+                                    backgroundColor: "#007bff",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "4px",
+                                    cursor: editingMappingId !== null ? "not-allowed" : "pointer",
+                                    fontSize: "0.85rem",
+                                    fontWeight: "500",
+                                    opacity: editingMappingId !== null ? 0.6 : 1,
+                                  }}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeletePincodeMapping(mapping.id)}
+                                  disabled={editingMappingId !== null}
+                                  style={{
+                                    backgroundColor: "#dc3545",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "0.5rem 1rem",
+                                    borderRadius: "4px",
+                                    cursor: editingMappingId !== null ? "not-allowed" : "pointer",
+                                    fontSize: "0.85rem",
+                                    fontWeight: "500",
+                                    opacity: editingMappingId !== null ? 0.6 : 1,
+                                  }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
