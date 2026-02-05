@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://172.105.36.66:8020";
+const BASE_URL = "http://172.105.61.24:8020";
 
 // 🔑 Token (temporary / from localStorage)
 const TOKEN = localStorage.getItem("token");
