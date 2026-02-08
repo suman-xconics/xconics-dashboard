@@ -1,22 +1,36 @@
-import API from "./api";
+// dataPacketApis.js - PROPER IMEI PASSING
+import API from "./api"; // Your API instance
+import { parseNormalPacket } from "../utils/parse-packet"; // Your parser
 
-/**
- * Get vehicle data packets list with pagination, search, and optional IMEI filter
- * @param {Object} params - Query parameters (imei, search, offset, limit)
- * @returns {Promise} - Response with data packets, message, and pagination info
- */
-export const getDataPackets = async (params = {}) => {
+export const getVehicleDataPackets = async (imei, params = {}) => {
   try {
-    const response = await API.get("/vehicles/data/list", { params });
+    // CRITICAL: Pass IMEI as query parameter ?imei=...
+    const queryParams = { 
+      imei,  
+      ...params 
+    };
+
+
+    
+    const response = await API.get("/vehicles/data/list", { params: queryParams });
+    console.log(response.data.data);
+    
+    const packets = response.data?.data?.dataPackets || [];
+
+    const formatted = packets.map((item) => ({
+      ...parseNormalPacket(item.packet),
+      imei: item.imei, // Preserve original IMEI
+      packet_type: item.packet_type || "NRM"
+    }));
+
     return {
       success: true,
-      data: response.data.data || [],
+      data: formatted,
       message: response.data.message,
-      // Note: API doesn't explicitly show maxPage, but following your pattern
-      maxPage: response.data.maxPage || Math.ceil((response.data.total || response.data.data?.length || 0) / (params.limit || 10)),
+      maxPage: response.data.data?.maxPage || 0,
     };
   } catch (error) {
-    console.error("Error fetching data packets:", error);
+    console.error("Data packets error:", error.response?.data || error);
     return {
       success: false,
       error: error.response?.data?.message || error.message || "Failed to fetch data packets",
@@ -26,26 +40,28 @@ export const getDataPackets = async (params = {}) => {
   }
 };
 
-/**
- * Get vehicle data packet details by SLN
- * @param {string|number} sln - Data packet SLN (Serial Log Number)
- * @returns {Promise} - Response with data packet details
- */
-export const getDataPacketBySln = async (sln) => {
+// Alternative version matching your exact getDataPackets format
+export const getDataPackets = async (params = {}) => {
   try {
-    const response = await API.get(`/vehicles/data/details/${sln}`);
-    console.log("Data Packet API Raw Response:", response.data); // Debug log
-    
+    const response = await API.get("/vehicles/data/list", { params });
+    const packets = response.data?.data?.dataPackets || [];
+
+    const formatted = packets.map((item) =>
+      parseNormalPacket(item.packet)
+    );
+
     return {
       success: true,
-      data: response.data.data, // Extract nested data object
+      data: formatted,
       message: response.data.message,
+      maxPage: response.data.data?.maxPage || 0,
     };
   } catch (error) {
-    console.error("Error fetching data packet details:", error);
     return {
       success: false,
-      error: error.response?.data?.message || error.message || "Failed to fetch data packet details",
+      error: error.response?.data?.message || error.message || "Failed to fetch data packets",
+      data: [],
+      maxPage: 0,
     };
   }
 };
