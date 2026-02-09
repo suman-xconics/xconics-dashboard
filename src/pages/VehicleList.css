@@ -1,0 +1,608 @@
+.tracker-page {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #212121;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.tracker-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tracker-table thead {
+  background-color: #f5f5f5;
+}
+
+.tracker-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #424242;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.tracker-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tracker-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.tracker-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.map-icon-btn:hover {
+  background-color: #f5f5f5 !important;
+}
+
+/* Modal Animations */
+.modal-overlay {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tracker-page {
+    padding: 0.5rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .tracker-table {
+    font-size: 0.85rem;
+  }
+
+  .tracker-table th,
+  .tracker-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+
+/* VehicleList.css */
+
+.tracker-page {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.tracker-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tracker-table thead {
+  background-color: #f5f5f5;
+}
+
+.tracker-table th {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tracker-table td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+}
+
+.tracker-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.tracker-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ✅ Pagination Button Styles */
+.pagination-btn {
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.pagination-btn:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.2);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tracker-page {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .tracker-table {
+    font-size: 0.85rem;
+  }
+
+  .tracker-table th,
+  .tracker-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+}
+
+/* Tracking View Specific Styles */
+.tracking-view-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+.tracking-split-view {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.tracking-table-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: white;
+  border-right: 1px solid #e0e0e0;
+}
+
+.tracking-map-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Search and Pagination Row */
+.search-pagination-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-field-container {
+  display: flex;
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+/* Responsive adjustments for tracking view */
+@media (max-width: 1024px) {
+  .tracking-split-view {
+    flex-direction: column;
+  }
+
+  .tracking-table-section,
+  .tracking-map-section {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .tracking-map-section {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-pagination-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pagination-info {
+    min-width: auto;
+  }
+}
+
+/* VehicleList.css */
+
+.tracker-page {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.tracker-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tracker-table thead {
+  background-color: #f5f5f5;
+}
+
+.tracker-table th {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tracker-table td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+}
+
+.tracker-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.tracker-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ✅ Pagination Button Styles */
+.pagination-btn {
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.pagination-btn:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.2);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.6;
+}
+
+/* ✅ Page Size Selector Styles */
+.page-size-selector {
+  transition: all 0.2s ease;
+}
+
+.page-size-selector:hover {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.page-size-selector:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+}
+
+/* ✅ Spinning Animation for Loading Icon */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* Search and Pagination Row */
+.search-pagination-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-field-container {
+  display: flex;
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.pagination-controls {
+  display: "flex";
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+/* Tracking View Specific Styles */
+.tracking-view-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+.tracking-split-view {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.tracking-table-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: white;
+  border-right: 1px solid #e0e0e0;
+}
+
+.tracking-map-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tracker-page {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .tracker-table {
+    font-size: 0.85rem;
+  }
+
+  .tracker-table th,
+  .tracker-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .search-pagination-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pagination-info {
+    min-width: auto;
+  }
+}
+
+/* Responsive adjustments for tracking view */
+@media (max-width: 1024px) {
+  .tracking-split-view {
+    flex-direction: column;
+  }
+
+  .tracking-table-section,
+  .tracking-map-section {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .tracking-map-section {
+    min-height: 400px;
+  }
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.loading-spinner p {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Button hover effects */
+button:not(:disabled) {
+  transition: all 0.2s ease;
+}
+
+button:not(:disabled):hover {
+  opacity: 0.9;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

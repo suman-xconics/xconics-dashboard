@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Eye, ArrowUp, ArrowDown, Truck, Trash2 } from "lucide-react";
@@ -241,13 +242,13 @@ export default function DeviceTableCard() {
                       <Pencil size={16} />
                     </button>
 
-                    <button
+                    {/* <button
                       className="icon-btn"
                       title="Move Device"
                       onClick={() => navigate(`/devices/move/${device.id}`)}
                     >
                       <Truck size={16} />
-                    </button>
+                    </button> */}
 
                     <button
                       className="icon-btn delete-btn"

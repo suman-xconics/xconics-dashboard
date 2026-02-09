@@ -11,7 +11,8 @@ import {
   Move,          // Device Movement
   MapPin,        // Vehicle List
   List,           // Vehicle Tracking
-  Tags
+  Tags,
+  AlertCircle
 } from "lucide-react";
 import "./Sidebar.css";
 
@@ -163,7 +164,7 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
 
         {/* Vehicle List */}
         <NavLink
-          to="/tracker"
+          to="/vehicles"
           className={({ isActive }) =>
             `nav-item ${isActive ? "active" : ""}`
           }
@@ -174,9 +175,21 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
           </span>
           {isOpen && <span className="nav-label">Vehicle List</span>}
         </NavLink>
+        <NavLink
+          to="/vehicles-alerts"
+          className={({ isActive }) =>
+            `nav-item ${isActive ? "active" : ""}`
+          }
+          onClick={handleNavClick}
+        >
+          <span className="nav-icon">
+            <AlertCircle size={20} strokeWidth={1.8} />
+          </span>
+          {isOpen && <span className="nav-label">Vehicle Alerts</span>}
+        </NavLink>
 
         {/* Vehicle Tracking */}
-        <NavLink
+        {/* <NavLink
           to="/vehicle-tracking"
           className={({ isActive }) =>
             `nav-item ${isActive ? "active" : ""}`
@@ -187,7 +200,7 @@ export default function Sidebar({ isOpen, isMobile, closeSidebar }) {
             <List size={20} strokeWidth={1.8} />
           </span>
           {isOpen && <span className="nav-label">Vehicle Tracking</span>}
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/support-tickets"
           className={({ isActive }) =>
