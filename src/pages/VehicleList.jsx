@@ -728,12 +728,13 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                   <th style={{ padding: "1rem 0.5rem", textAlign: "left", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "30%" }}>Latitude</th>
                   <th style={{ padding: "1rem 0.5rem", textAlign: "left", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "30%" }}>Longitude</th>
                   <th style={{ padding: "1rem 0.5rem", textAlign: "center", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "25%" }}>Main Power</th>
+                  <th style={{ padding: "1rem 0.5rem", textAlign: "center", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "25%" }}>Speed</th>
                 </tr>
               </thead>
               <tbody>
                 {!trackingData || trackingData.length === 0 ? (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center", padding: "3rem", color: "#999" }}>
+                    <td colSpan="5" style={{ textAlign: "center", padding: "3rem", color: "#999" }}>
                       {dataSearchTerm ? `No records found for "${dataSearchTerm}"` : "No records available"}
                     </td>
                   </tr>
@@ -774,6 +775,11 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                             }}
                           >
                             {data.main_power ? "ON" : "OFF"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "1rem 0.5rem", textAlign: "center" }}>
+                          <span style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#333" }}>
+                            {data.speed !== undefined ? `${data.speed} km/h` : "N/A"}
                           </span>
                         </td>
                       </tr>
