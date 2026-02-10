@@ -729,6 +729,7 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                   <th style={{ padding: "1rem 0.5rem", textAlign: "left", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "30%" }}>Longitude</th>
                   <th style={{ padding: "1rem 0.5rem", textAlign: "center", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "25%" }}>Main Power</th>
                   <th style={{ padding: "1rem 0.5rem", textAlign: "center", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "25%" }}>Speed</th>
+                  <th style={{ padding: "1rem 0.5rem", textAlign: "center", fontWeight: "600", borderBottom: "2px solid #e0e0e0", width: "25%" }}>Timestamp</th>
                 </tr>
               </thead>
               <tbody>
@@ -780,6 +781,11 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                         <td style={{ padding: "1rem 0.5rem", textAlign: "center" }}>
                           <span style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#333" }}>
                             {data.speed !== undefined ? `${data.speed} km/h` : "N/A"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "1rem 0.5rem", textAlign: "center" }}>
+                          <span style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#333" }}>
+                            {data.time_stamp_server ? new Date(data.time_stamp_server).toLocaleString() : "N/A"}
                           </span>
                         </td>
                       </tr>
