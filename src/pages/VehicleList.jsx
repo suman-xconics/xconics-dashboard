@@ -1008,7 +1008,7 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                             borderRadius: "4px",
                             fontSize: "0.8rem",
                             fontWeight: "600",
-                            backgroundColor: data.ignition ? "#e8f5e9" : "#ffebee",
+                            backgroundColor: data.ignition_status === "1" ? "#e8f5e9" : "#ffebee",
                             color: data.ignition_status === "1" ? "#2e7d32" : "#c62828"
                           }}>
                             {data.ignition_status === "1" ? "ON" : "OFF"}
