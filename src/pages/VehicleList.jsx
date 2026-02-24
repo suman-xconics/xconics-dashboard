@@ -211,6 +211,13 @@ function PathWithMarkers({ trackingData }) {
                       {data.main_power ? 'ON' : 'OFF'}
                     </span>
                   </div>
+                  <div style={{ fontSize: '12px', marginBottom: '6px', color: '#333' }}>
+                    <strong>
+                      Ignition Status:</strong> <span style={{ color: data.ignition_status === "1" ? '#4CAF50' : '#F44336', fontWeight: '600' }}>
+                      {data.ignition_status === "1" ? 'ON' : 'OFF'}
+                    </span>
+                  </div>
+
                   <div style={{ fontSize: '11px', color: '#666', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #eee' }}>
                     {data.time_stamp_server ? new Date(data.time_stamp_server).toLocaleString() : 'N/A'}
                   </div>
@@ -954,6 +961,7 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                   <th style={{ padding: "0.875rem", textAlign: "left", fontWeight: "600", fontSize: "0.85rem", color: "#666", borderBottom: "2px solid #e0e0e0" }}>Latitude</th>
                   <th style={{ padding: "0.875rem", textAlign: "left", fontWeight: "600", fontSize: "0.85rem", color: "#666", borderBottom: "2px solid #e0e0e0" }}>Longitude</th>
                   <th style={{ padding: "0.875rem", textAlign: "left", fontWeight: "600", fontSize: "0.85rem", color: "#666", borderBottom: "2px solid #e0e0e0" }}>Main Power</th>
+                  <th style={{ padding: "0.875rem", textAlign: "left", fontWeight: "600", fontSize: "0.85rem", color: "#666", borderBottom: "2px solid #e0e0e0" }}>Ignition Status</th>
                   <th style={{ padding: "0.875rem", textAlign: "left", fontWeight: "600", fontSize: "0.85rem", color: "#666", borderBottom: "2px solid #e0e0e0" }}>Speed</th>
                   <th style={{ padding: "0.875rem", textAlign: "left", fontWeight: "600", fontSize: "0.85rem", color: "#666", borderBottom: "2px solid #e0e0e0" }}>Timestamp</th>
                 </tr>
@@ -992,6 +1000,18 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                             color: data.main_power ? "#2e7d32" : "#c62828"
                           }}>
                             {data.main_power ? "ON" : "OFF"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "0.875rem", fontSize: "0.9rem" }}>
+                          <span style={{ 
+                            padding: "0.3rem 0.6rem",
+                            borderRadius: "4px",
+                            fontSize: "0.8rem",
+                            fontWeight: "600",
+                            backgroundColor: data.ignition_status === "1" ? "#e8f5e9" : "#ffebee",
+                            color: data.ignition_status === "1" ? "#2e7d32" : "#c62828"
+                          }}>
+                            {data.ignition_status === "1" ? "ON" : "OFF"}
                           </span>
                         </td>
                         <td style={{ padding: "0.875rem", fontSize: "0.9rem" }}>
