@@ -213,8 +213,8 @@ function PathWithMarkers({ trackingData }) {
                   </div>
                   <div style={{ fontSize: '12px', marginBottom: '6px', color: '#333' }}>
                     <strong>
-                      Ignition Status:</strong> <span style={{ color: data.ignition_status === "1" ? '#4CAF50' : '#F44336', fontWeight: '600' }}>
-                      {data.ignition_status === "1" ? 'ON' : 'OFF'}
+                      Jerk Status:</strong> <span style={{ color: data.jerk_status === "1" ? '#4CAF50' : '#F44336', fontWeight: '600' }}>
+                      {data.jerk_status === "1" ? 'ON' : 'OFF'}
                     </span>
                   </div>
 
@@ -1008,10 +1008,10 @@ function VehicleTrackingView({ vehicle, trackingData: initialTrackingData, imei,
                             borderRadius: "4px",
                             fontSize: "0.8rem",
                             fontWeight: "600",
-                            backgroundColor: data.ignition_status === "1" ? "#e8f5e9" : "#ffebee",
-                            color: data.ignition_status === "1" ? "#2e7d32" : "#c62828"
+                            backgroundColor: data.jerk_status === "1" ? "#e8f5e9" : "#ffebee",
+                            color: data.jerk_status === "1" ? "#2e7d32" : "#c62828"
                           }}>
-                            {data.ignition_status === "1" ? "ON" : "OFF"}
+                            {data.jerk_status === "1" ? "ON" : "OFF"}
                           </span>
                         </td>
                         <td style={{ padding: "0.875rem", fontSize: "0.9rem" }}>
