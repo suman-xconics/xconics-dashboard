@@ -46,3 +46,4 @@ export const getVehicleByVehicleNo = async (vehicleNo) => {
     };
   }
 };
+
